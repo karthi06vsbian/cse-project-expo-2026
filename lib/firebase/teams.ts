@@ -1,4 +1,18 @@
 import { getAdminFirestore } from './admin';
+import { db } from './client';
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  orderBy,
+  where,
+  limit,
+} from 'firebase/firestore';
 import { Team, WhatsAppLog, TeamStatus } from '@/types';
 
 // Fallback demo teams for preview if Firestore is not yet connected
@@ -125,77 +139,95 @@ const FALLBACK_TEAMS: Team[] = [
   },
 ];
 
-// In-memory cache for demo/local storage if Firebase service key isn't provided
+// In-memory cache for demo/local storage
 let localMemoryTeams: Team[] = [...FALLBACK_TEAMS];
 let localMemoryLogs: WhatsAppLog[] = [];
 
 export async function getAllFirestoreTeams(): Promise<Team[]> {
-  const firestore = getAdminFirestore();
-
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return localMemoryTeams;
-  }
-
-  try {
-    const snapshot = await firestore.collection('teams').orderBy('submitted_at', 'desc').get();
-    if (snapshot.empty) {
-      return localMemoryTeams;
+  // 1. Try Admin SDK if configured
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      const snapshot = await adminFirestore.collection('teams').orderBy('submitted_at', 'desc').get();
+      if (!snapshot.empty) {
+        return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Team, 'id'>) }));
+      }
+    } catch (e) {
+      console.warn('[Admin Firestore] Query fallback:', e);
     }
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Omit<Team, 'id'>),
-    }));
-  } catch (err) {
-    console.warn('[Firestore] Error fetching teams, using memory teams:', err);
-    return localMemoryTeams;
   }
+
+  // 2. Try Web SDK Firestore
+  try {
+    const teamsCol = collection(db, 'teams');
+    const q = query(teamsCol, orderBy('submitted_at', 'desc'));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Team, 'id'>) }));
+    }
+  } catch (err) {
+    console.warn('[Web Firestore] Query fallback, using memory:', err);
+  }
+
+  return localMemoryTeams;
 }
 
 export async function getTeamByUserId(userId: string): Promise<Team | null> {
-  const firestore = getAdminFirestore();
-
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return localMemoryTeams.find((t) => t.submitted_by === userId) || null;
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      const snapshot = await adminFirestore
+        .collection('teams')
+        .where('submitted_by', '==', userId)
+        .limit(1)
+        .get();
+      if (!snapshot.empty) {
+        const d = snapshot.docs[0]!;
+        return { id: d.id, ...(d.data() as Omit<Team, 'id'>) };
+      }
+    } catch (e) {}
   }
 
   try {
-    const snapshot = await firestore
-      .collection('teams')
-      .where('submitted_by', '==', userId)
-      .limit(1)
-      .get();
+    const teamsCol = collection(db, 'teams');
+    const q = query(teamsCol, where('submitted_by', '==', userId), limit(1));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      const d = snapshot.docs[0]!;
+      return { id: d.id, ...(d.data() as Omit<Team, 'id'>) };
+    }
+  } catch (err) {}
 
-    if (snapshot.empty) return null;
-    const doc = snapshot.docs[0]!;
-    return { id: doc.id, ...(doc.data() as Omit<Team, 'id'>) };
-  } catch (err) {
-    console.error('[Firestore getTeamByUserId error]', err);
-    return localMemoryTeams.find((t) => t.submitted_by === userId) || null;
-  }
+  return localMemoryTeams.find((t) => t.submitted_by === userId) || null;
 }
 
 export async function getTeamByDocId(docId: string): Promise<Team | null> {
-  const firestore = getAdminFirestore();
-
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return localMemoryTeams.find((t) => t.id === docId) || null;
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      const d = await adminFirestore.collection('teams').doc(docId).get();
+      if (d.exists) {
+        return { id: d.id, ...(d.data() as Omit<Team, 'id'>) };
+      }
+    } catch (e) {}
   }
 
   try {
-    const doc = await firestore.collection('teams').doc(docId).get();
-    if (!doc.exists) return null;
-    return { id: doc.id, ...(doc.data() as Omit<Team, 'id'>) };
-  } catch (err) {
-    return localMemoryTeams.find((t) => t.id === docId) || null;
-  }
+    const docRef = doc(db, 'teams', docId);
+    const d = await getDoc(docRef);
+    if (d.exists()) {
+      return { id: d.id, ...(d.data() as Omit<Team, 'id'>) };
+    }
+  } catch (err) {}
+
+  return localMemoryTeams.find((t) => t.id === docId) || null;
 }
 
-export async function createFirestoreTeam(teamData: Omit<Team, 'id' | 'submission_id' | 'submitted_at' | 'updated_at'>): Promise<Team> {
-  const firestore = getAdminFirestore();
-
-  // Generate sequence submission ID
-  const existingCount = (await getAllFirestoreTeams()).length;
-  const seqNum = String(existingCount + 1).padStart(4, '0');
+export async function createFirestoreTeam(
+  teamData: Omit<Team, 'id' | 'submission_id' | 'submitted_at' | 'updated_at'>
+): Promise<Team> {
+  const existingTeams = await getAllFirestoreTeams();
+  const seqNum = String(existingTeams.length + 1).padStart(4, '0');
   const submission_id = `CSEEXPO-2026-${seqNum}`;
   const now = new Date().toISOString();
 
@@ -207,13 +239,27 @@ export async function createFirestoreTeam(teamData: Omit<Team, 'id' | 'submissio
     updated_at: now,
   };
 
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    localMemoryTeams.unshift(newTeam);
-    return newTeam;
+  // 1. Try Admin SDK
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      const docRef = await adminFirestore.collection('teams').add({
+        submission_id,
+        ...teamData,
+        submitted_at: now,
+        updated_at: now,
+      });
+      newTeam.id = docRef.id;
+      return newTeam;
+    } catch (e) {
+      console.warn('[Admin Firestore] Add error:', e);
+    }
   }
 
+  // 2. Try Web SDK
   try {
-    const docRef = await firestore.collection('teams').add({
+    const teamsCol = collection(db, 'teams');
+    const docRef = await addDoc(teamsCol, {
       submission_id,
       ...teamData,
       submitted_at: now,
@@ -222,55 +268,46 @@ export async function createFirestoreTeam(teamData: Omit<Team, 'id' | 'submissio
     newTeam.id = docRef.id;
     return newTeam;
   } catch (err) {
-    console.warn('[Firestore] Error saving team to cloud Firestore, saving in memory:', err);
-    localMemoryTeams.unshift(newTeam);
-    return newTeam;
+    console.warn('[Web Firestore] Add error, saving to memory:', err);
   }
+
+  // 3. Fallback in memory
+  localMemoryTeams.unshift(newTeam);
+  return newTeam;
 }
 
 export async function updateFirestoreTeam(docId: string, updates: Partial<Team>): Promise<boolean> {
-  const firestore = getAdminFirestore();
   const now = new Date().toISOString();
 
-  // Update in local memory
+  // In-memory update
   const idx = localMemoryTeams.findIndex((t) => t.id === docId);
   if (idx !== -1) {
     localMemoryTeams[idx] = { ...localMemoryTeams[idx]!, ...updates, updated_at: now };
   }
 
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return true;
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      await adminFirestore.collection('teams').doc(docId).update({
+        ...updates,
+        updated_at: now,
+      });
+      return true;
+    } catch (e) {}
   }
 
   try {
-    await firestore.collection('teams').doc(docId).update({
-      ...updates,
-      updated_at: now,
-    });
+    const docRef = doc(db, 'teams', docId);
+    await updateDoc(docRef, { ...updates, updated_at: now });
     return true;
-  } catch (err) {
-    console.error('[Firestore update error]', err);
-    return false;
-  }
+  } catch (err) {}
+
+  return idx !== -1;
 }
 
-export async function deleteFirestoreTeam(docId: string): Promise<boolean> {
-  localMemoryTeams = localMemoryTeams.filter((t) => t.id !== docId);
-
-  const firestore = getAdminFirestore();
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return true;
-  }
-
-  try {
-    await firestore.collection('teams').doc(docId).delete();
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-export async function logFirestoreWhatsAppMessage(logData: Omit<WhatsAppLog, 'id' | 'sent_at'>): Promise<WhatsAppLog> {
+export async function logFirestoreWhatsAppMessage(
+  logData: Omit<WhatsAppLog, 'id' | 'sent_at'>
+): Promise<void> {
   const now = new Date().toISOString();
   const newLog: WhatsAppLog = {
     id: `log_${Date.now()}_${Math.random().toString(36).substring(7)}`,
@@ -280,38 +317,71 @@ export async function logFirestoreWhatsAppMessage(logData: Omit<WhatsAppLog, 'id
 
   localMemoryLogs.unshift(newLog);
 
-  const firestore = getAdminFirestore();
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return newLog;
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      await adminFirestore.collection('whatsapp_logs').add({
+        ...logData,
+        sent_at: now,
+      });
+      return;
+    } catch (e) {}
   }
 
   try {
-    const docRef = await firestore.collection('whatsapp_logs').add({
-      ...logData,
-      sent_at: now,
-    });
-    newLog.id = docRef.id;
-    return newLog;
-  } catch (err) {
-    return newLog;
-  }
+    const logsCol = collection(db, 'whatsapp_logs');
+    await addDoc(logsCol, { ...logData, sent_at: now });
+  } catch (err) {}
 }
 
-export async function getAllFirestoreWhatsAppLogs(): Promise<WhatsAppLog[]> {
-  const firestore = getAdminFirestore();
-
-  if (!firestore || !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
-    return localMemoryLogs;
+export async function getFirestoreWhatsAppLogs(): Promise<WhatsAppLog[]> {
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      const snap = await adminFirestore
+        .collection('whatsapp_logs')
+        .orderBy('sent_at', 'desc')
+        .limit(100)
+        .get();
+      if (!snap.empty) {
+        return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<WhatsAppLog, 'id'>) }));
+      }
+    } catch (e) {}
   }
 
   try {
-    const snapshot = await firestore.collection('whatsapp_logs').orderBy('sent_at', 'desc').get();
-    if (snapshot.empty) return localMemoryLogs;
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Omit<WhatsAppLog, 'id'>),
-    }));
-  } catch (err) {
-    return localMemoryLogs;
+    const logsCol = collection(db, 'whatsapp_logs');
+    const q = query(logsCol, orderBy('sent_at', 'desc'), limit(100));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<WhatsAppLog, 'id'>) }));
+    }
+  } catch (err) {}
+
+  return localMemoryLogs;
+}
+
+export const getAllFirestoreWhatsAppLogs = getFirestoreWhatsAppLogs;
+
+export async function deleteFirestoreTeam(docId: string): Promise<boolean> {
+  const idx = localMemoryTeams.findIndex((t) => t.id === docId);
+  if (idx !== -1) {
+    localMemoryTeams.splice(idx, 1);
   }
+
+  const adminFirestore = getAdminFirestore();
+  if (adminFirestore) {
+    try {
+      await adminFirestore.collection('teams').doc(docId).delete();
+      return true;
+    } catch (e) {}
+  }
+
+  try {
+    const docRef = doc(db, 'teams', docId);
+    await deleteDoc(docRef);
+    return true;
+  } catch (err) {}
+
+  return idx !== -1;
 }

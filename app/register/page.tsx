@@ -269,14 +269,21 @@ export default function RegisterPage() {
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (parseErr) {
+        setSubmitError(`Server error (${response.status}): Could not complete registration. Please try again.`);
+        setIsSubmitting(false);
+        return;
+      }
 
       if (!response.ok) {
-        if (response.status === 409) {
-          router.replace(`/success?submission_id=${encodeURIComponent(result.submissionId)}&team_name=${encodeURIComponent(result.teamName)}&project_title=${encodeURIComponent(result.projectTitle)}&existing=true`);
+        if (response.status === 409 && result?.submissionId) {
+          router.replace(`/success?submission_id=${encodeURIComponent(result.submissionId)}&team_name=${encodeURIComponent(result.teamName || '')}&project_title=${encodeURIComponent(result.projectTitle || '')}&existing=true`);
           return;
         }
-        setSubmitError(result.error || 'Failed to submit registration.');
+        setSubmitError(result?.error || 'Failed to submit registration.');
         setIsSubmitting(false);
         return;
       }
