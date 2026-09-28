@@ -121,7 +121,9 @@ export async function POST(request: Request) {
         createdTeam.submission_id
       );
 
-      const waResult = await sendWhatsAppTemplateMessage(normalizedPhone, templatePayload);
+      const fallbackText = `🎓 *VSB College of Engineering Technical Campus*\n*Department of Computer Science and Engineering*\n*CSE Project Expo 2026 - Registration Confirmed*\n\nDear *${createdTeam.team_leader_name}*,\n\nYour project registration has been successfully received!\n\n📋 *Registration Details:*\n• *Submission ID:* ${createdTeam.submission_id}\n• *Team Name:* ${createdTeam.team_name}\n• *Project Title:* ${createdTeam.project_title}\n• *Status:* Under Faculty Review\n\nStay tuned for schedule updates and shortlisted announcements.\n\nBest regards,\n*Organizing Committee - CSE Project Expo 2026*\nVSB College of Engineering Technical Campus`;
+
+      const waResult = await sendWhatsAppTemplateMessage(normalizedPhone, templatePayload, fallbackText);
 
       if (waResult.success) {
         whatsappStatus = 'sent';

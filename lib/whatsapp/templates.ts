@@ -3,9 +3,9 @@ export interface WhatsAppTemplatePayload {
   language: {
     code: string;
   };
-  components: Array<{
+  components?: Array<{
     type: 'body' | 'header';
-    parameters: Array<{
+    parameters?: Array<{
       type: 'text';
       text: string;
     }>;
@@ -18,15 +18,15 @@ export function buildSubmissionSuccessTemplate(
   submissionId: string
 ): WhatsAppTemplatePayload {
   return {
-    name: 'project_submission_success',
-    language: { code: 'en' },
+    name: 'cse_expo_registration_success',
+    language: { code: 'en_US' },
     components: [
       {
         type: 'body',
         parameters: [
           { type: 'text', text: leaderName },
-          { type: 'text', text: projectTitle },
           { type: 'text', text: submissionId },
+          { type: 'text', text: projectTitle },
         ],
       },
     ],
