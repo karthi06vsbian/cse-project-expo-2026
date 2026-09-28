@@ -1,4 +1,3 @@
-import { getAdminFirestore } from './admin';
 import { db } from './client';
 import {
   collection,
@@ -139,13 +138,22 @@ const FALLBACK_TEAMS: Team[] = [
   },
 ];
 
-// In-memory cache for demo/local storage
 let localMemoryTeams: Team[] = [...FALLBACK_TEAMS];
 let localMemoryLogs: WhatsAppLog[] = [];
 
+async function getAdminFirestoreSafe() {
+  if (!process.env.FIREBASE_ADMIN_PRIVATE_KEY) return null;
+  try {
+    const { getAdminFirestore } = await import('./admin');
+    return getAdminFirestore();
+  } catch {
+    return null;
+  }
+}
+
 export async function getAllFirestoreTeams(): Promise<Team[]> {
   // 1. Try Admin SDK if configured
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       const snapshot = await adminFirestore.collection('teams').orderBy('submitted_at', 'desc').get();
@@ -173,7 +181,7 @@ export async function getAllFirestoreTeams(): Promise<Team[]> {
 }
 
 export async function getTeamByUserId(userId: string): Promise<Team | null> {
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       const snapshot = await adminFirestore
@@ -202,7 +210,7 @@ export async function getTeamByUserId(userId: string): Promise<Team | null> {
 }
 
 export async function getTeamByDocId(docId: string): Promise<Team | null> {
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       const d = await adminFirestore.collection('teams').doc(docId).get();
@@ -240,7 +248,7 @@ export async function createFirestoreTeam(
   };
 
   // 1. Try Admin SDK
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       const docRef = await adminFirestore.collection('teams').add({
@@ -285,7 +293,7 @@ export async function updateFirestoreTeam(docId: string, updates: Partial<Team>)
     localMemoryTeams[idx] = { ...localMemoryTeams[idx]!, ...updates, updated_at: now };
   }
 
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       await adminFirestore.collection('teams').doc(docId).update({
@@ -317,7 +325,7 @@ export async function logFirestoreWhatsAppMessage(
 
   localMemoryLogs.unshift(newLog);
 
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       await adminFirestore.collection('whatsapp_logs').add({
@@ -335,7 +343,7 @@ export async function logFirestoreWhatsAppMessage(
 }
 
 export async function getFirestoreWhatsAppLogs(): Promise<WhatsAppLog[]> {
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       const snap = await adminFirestore
@@ -369,7 +377,7 @@ export async function deleteFirestoreTeam(docId: string): Promise<boolean> {
     localMemoryTeams.splice(idx, 1);
   }
 
-  const adminFirestore = getAdminFirestore();
+  const adminFirestore = await getAdminFirestoreSafe();
   if (adminFirestore) {
     try {
       await adminFirestore.collection('teams').doc(docId).delete();

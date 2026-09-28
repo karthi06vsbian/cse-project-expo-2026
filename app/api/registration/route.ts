@@ -11,6 +11,8 @@ import { sendWhatsAppTemplateMessage } from '@/lib/whatsapp/client';
 import { buildSubmissionSuccessTemplate } from '@/lib/whatsapp/templates';
 import { CollegeYear, CollegeSection } from '@/types';
 
+export const dynamic = 'force-dynamic';
+
 // GET: Check existing submission for currently logged-in student
 export async function GET(request: Request) {
   try {
