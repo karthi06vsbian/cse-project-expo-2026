@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { getTeamByDocId, updateFirestoreTeam } from '@/lib/firebase/teams';
 import { verifyAdminSession } from '@/lib/auth/admin-guard';
 
 export async function GET(
@@ -12,14 +12,9 @@ export async function GET(
   }
 
   try {
-    const adminSupabase = createAdminClient();
-    const { data: team, error } = await adminSupabase
-      .from('teams')
-      .select('*, team_members(*), whatsapp_logs(*)')
-      .eq('id', params.id)
-      .maybeSingle();
+    const team = await getTeamByDocId(params.id);
 
-    if (error || !team) {
+    if (!team) {
       return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
@@ -40,56 +35,14 @@ export async function PATCH(
 
   try {
     const body = await request.json();
-    const adminSupabase = createAdminClient();
+    const success = await updateFirestoreTeam(params.id, body);
 
-    const allowedFields = [
-      'team_name',
-      'team_leader_name',
-      'whatsapp_number',
-      'project_title',
-      'theme',
-      'problem_description',
-      'solution_description',
-      'technologies_used',
-      'hardware_components',
-      'expected_outcome',
-      'status',
-    ];
-
-    const updates: Record<string, any> = {
-      updated_at: new Date().toISOString(),
-    };
-
-    allowedFields.forEach((field) => {
-      if (body[field] !== undefined) {
-        updates[field] = body[field];
-      }
-    });
-
-    const { data: updatedTeam, error } = await adminSupabase
-      .from('teams')
-      .update(updates)
-      .eq('id', params.id)
-      .select()
-      .maybeSingle();
-
-    if (error) {
+    if (!success) {
       return NextResponse.json({ error: 'Failed to update team details' }, { status: 500 });
     }
 
-    // If members were supplied, update them
-    if (Array.isArray(body.members)) {
-      await adminSupabase.from('team_members').delete().eq('team_id', params.id);
-      const newMembers = body.members.map((m: any) => ({
-        team_id: params.id,
-        name: m.name,
-        year: m.year,
-        section: m.section,
-      }));
-      await adminSupabase.from('team_members').insert(newMembers);
-    }
-
-    return NextResponse.json({ success: true, team: updatedTeam });
+    const updated = await getTeamByDocId(params.id);
+    return NextResponse.json({ success: true, team: updated });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Update error' }, { status: 500 });
   }

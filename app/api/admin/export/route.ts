@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { getAllFirestoreTeams } from '@/lib/firebase/teams';
 import { verifyAdminSession } from '@/lib/auth/admin-guard';
 import { generateTeamsExcelBuffer } from '@/lib/excel/export';
 import { Team } from '@/types';
@@ -13,21 +13,11 @@ export async function POST(request: Request) {
   try {
     const { teamIds } = await request.json(); // optional array of IDs
 
-    const adminSupabase = createAdminClient();
-    let query = adminSupabase.from('teams').select('*, team_members(*)');
+    let teams: Team[] = await getAllFirestoreTeams();
 
     if (Array.isArray(teamIds) && teamIds.length > 0) {
-      query = query.in('id', teamIds);
+      teams = teams.filter((t) => teamIds.includes(t.id));
     }
-
-    const { data: dbTeams, error } = await query;
-
-    if (error) {
-      console.error('[Export Query Error]', error);
-      return NextResponse.json({ error: 'Failed to retrieve team data for export' }, { status: 500 });
-    }
-
-    const teams: Team[] = (dbTeams || []) as Team[];
 
     if (teams.length === 0) {
       return NextResponse.json({ error: 'No matching team records found to export' }, { status: 404 });
@@ -38,7 +28,7 @@ export async function POST(request: Request) {
     const timestamp = new Date().toISOString().split('T')[0];
     const filename = `CSE_Project_Expo_2026_Teams_${timestamp}.xlsx`;
 
-    // Convert Node Buffer to Uint8Array for standard Web BodyInit compatibility
+    // Convert Buffer to Uint8Array for Web BodyInit
     const uint8Array = new Uint8Array(excelBuffer);
 
     return new NextResponse(uint8Array, {

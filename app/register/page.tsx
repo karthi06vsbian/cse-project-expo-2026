@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
+import { auth } from '@/lib/firebase/client';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,7 +43,7 @@ export default function RegisterPage() {
 
   // Auth & loading states
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -75,46 +76,40 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    async function initAuth() {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // If not logged in, redirect to login
+        router.replace('/login');
+        return;
+      }
+
+      setCurrentUser(user);
+      setEmail(user.email || '');
+      const autoName = user.displayName || user.email?.split('@')[0] || '';
+      setTeamLeaderName(autoName);
+
+      // Pre-fill member 1 with leader name
+      setMembers((prev) => [
+        { name: autoName, year: '3rd Year', section: 'A' },
+        prev[1] || { name: '', year: '3rd Year', section: 'B' },
+      ]);
+
+      // Check if user already submitted a project
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-
-        if (!user) {
-          // If not logged in, route to login page
-          router.replace('/login');
-          return;
-        }
-
-        setCurrentUser(user);
-        setEmail(user.email || '');
-        const autoName =
-          user.user_metadata?.full_name ||
-          user.user_metadata?.name ||
-          user.email?.split('@')[0] ||
-          '';
-        setTeamLeaderName(autoName);
-
-        // Pre-fill member 1 with leader name if empty
-        setMembers((prev) => [
-          { name: autoName, year: '3rd Year', section: 'A' },
-          prev[1] || { name: '', year: '3rd Year', section: 'B' },
-        ]);
-
-        // Check if user already submitted a project
-        const res = await fetch('/api/registration');
+        const res = await fetch(`/api/registration?email=${encodeURIComponent(user.email || '')}&userId=${encodeURIComponent(user.uid)}`);
         const data = await res.json();
         if (data?.team) {
-          router.replace('/success?existing=true');
+          router.replace(`/success?submission_id=${encodeURIComponent(data.team.submission_id)}&team_name=${encodeURIComponent(data.team.team_name)}&project_title=${encodeURIComponent(data.team.project_title)}&existing=true`);
           return;
         }
       } catch (err) {
-        console.error('Registration init error:', err);
+        console.error('Error checking registration status:', err);
       } finally {
         setIsAuthLoading(false);
       }
-    }
-    initAuth();
+    });
+
+    return () => unsubscribe();
   }, [router]);
 
   // Sync teamLeaderName to Member 1
@@ -255,7 +250,8 @@ export default function RegisterPage() {
       teamName,
       teamLeaderName,
       whatsappNumber,
-      email,
+      email: currentUser?.email || email,
+      userId: currentUser?.uid || `user_${Date.now()}`,
       theme,
       projectTitle,
       problemDescription,
@@ -277,7 +273,7 @@ export default function RegisterPage() {
 
       if (!response.ok) {
         if (response.status === 409) {
-          router.replace('/success?existing=true');
+          router.replace(`/success?submission_id=${encodeURIComponent(result.submissionId)}&team_name=${encodeURIComponent(result.teamName)}&project_title=${encodeURIComponent(result.projectTitle)}&existing=true`);
           return;
         }
         setSubmitError(result.error || 'Failed to submit registration.');

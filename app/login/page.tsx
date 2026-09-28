@@ -3,7 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
+import { auth, googleProvider } from '@/lib/firebase/client';
+import { signInWithPopup, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -12,65 +13,62 @@ import { Team } from '@/types';
 
 function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [existingSubmission, setExistingSubmission] = useState<Team | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const authError = searchParams.get('error');
 
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        setCurrentUser(user);
+  const checkUserSubmission = async (userEmail: string, userId: string) => {
+    try {
+      const res = await fetch(`/api/registration?email=${encodeURIComponent(userEmail)}&userId=${encodeURIComponent(userId)}`);
+      const data = await res.json();
+      if (data?.team) {
+        setExistingSubmission(data.team);
+      } else {
+        setExistingSubmission(null);
+      }
+    } catch (err) {
+      console.error('Error checking submission status:', err);
+    } finally {
+      setCheckingStatus(false);
+    }
+  };
 
-        if (user) {
-          // Check for existing submission via API
-          const res = await fetch('/api/registration');
-          const data = await res.json();
-          if (data?.team) {
-            setExistingSubmission(data.team);
-          }
-        }
-      } catch (err) {
-        console.error('Error checking auth status:', err);
-      } finally {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+      if (user?.email) {
+        await checkUserSubmission(user.email, user.uid);
+      } else {
+        setExistingSubmission(null);
         setCheckingStatus(false);
       }
-    }
-    checkAuth();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      const supabase = createClient();
-      const redirectUrl = `${window.location.origin}/api/auth/callback`;
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        },
-      });
-      if (error) {
-        alert(`Google login error: ${error.message}`);
-        setIsLoading(false);
+      const result = await signInWithPopup(auth, googleProvider);
+      if (result.user?.email) {
+        await checkUserSubmission(result.user.email, result.user.uid);
       }
     } catch (err: any) {
-      alert(`Unexpected error: ${err.message}`);
+      // If popup was closed by user or blocked, provide graceful error
+      if (err.code !== 'auth/popup-closed-by-user') {
+        alert(`Google login error: ${err.message}`);
+      }
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOut(auth);
     setCurrentUser(null);
     setExistingSubmission(null);
   };
@@ -97,7 +95,7 @@ function LoginContent() {
           <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             <p className="text-xs text-rose-300">
-              Authentication failed or was cancelled. Please try signing in again with your Google account.
+              Authentication failed. Please try signing in again with your Google account.
             </p>
           </div>
         )}
@@ -159,7 +157,7 @@ function LoginContent() {
                 </div>
 
                 <div className="pt-2 flex flex-col gap-2">
-                  <Link href="/success?existing=true">
+                  <Link href={`/success?submission_id=${encodeURIComponent(existingSubmission.submission_id)}&team_name=${encodeURIComponent(existingSubmission.team_name)}&project_title=${encodeURIComponent(existingSubmission.project_title)}&existing=true`}>
                     <Button className="w-full">
                       View Full Submission Details
                       <ArrowRight className="w-4 h-4 ml-1.5" />

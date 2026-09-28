@@ -1,36 +1,35 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import {
+  getAllFirestoreTeams,
+  getTeamByUserId,
+  createFirestoreTeam,
+  logFirestoreWhatsAppMessage,
+} from '@/lib/firebase/teams';
 import { registrationSchema, normalizeWhatsAppNumber } from '@/lib/validation/schemas';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { sendWhatsAppTemplateMessage } from '@/lib/whatsapp/client';
 import { buildSubmissionSuccessTemplate } from '@/lib/whatsapp/templates';
+import { CollegeYear, CollegeSection } from '@/types';
 
 // GET: Check existing submission for currently logged-in student
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get('email');
+    const userId = searchParams.get('userId');
 
-    if (userError || !user) {
+    if (!email && !userId) {
       return NextResponse.json({ authenticated: false, team: null });
     }
 
-    const adminSupabase = createAdminClient();
-    const { data: team } = await adminSupabase
-      .from('teams')
-      .select('*, team_members(*)')
-      .eq('submitted_by', user.id)
-      .maybeSingle();
+    const allTeams = await getAllFirestoreTeams();
+    const existing = allTeams.find(
+      (t) => (userId && t.submitted_by === userId) || (email && t.email.toLowerCase() === email.toLowerCase())
+    );
 
     return NextResponse.json({
-      authenticated: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.user_metadata?.full_name || user.user_metadata?.name || '',
-      },
-      team: team || null,
+      authenticated: Boolean(email || userId),
+      team: existing || null,
     });
   } catch (err: any) {
     console.error('[Registration GET Error]', err);
@@ -41,7 +40,7 @@ export async function GET() {
 // POST: Submit new team registration
 export async function POST(request: Request) {
   try {
-    // 1. Rate limiting by IP
+    // 1. Rate limiting
     const clientIp = request.headers.get('x-forwarded-for') || 'local-client';
     const rateCheck = checkRateLimit(`reg_${clientIp}`, { intervalMs: 60 * 1000, maxRequests: 5 });
     if (!rateCheck.allowed) {
@@ -51,25 +50,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Authentication Check
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const body = await request.json();
 
-    if (authError || !user || !user.email) {
-      return NextResponse.json(
-        { error: 'Authentication required. Please sign in with your Gmail account to submit your project.' },
-        { status: 401 }
-      );
+    // 2. Validate Form Data with Zod
+    const validationResult = registrationSchema.safeParse(body);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0]?.message || 'Invalid form input';
+      return NextResponse.json({ error: firstError, details: validationResult.error.flatten() }, { status: 400 });
     }
 
-    const adminSupabase = createAdminClient();
+    const valData = validationResult.data;
+    const userId = body.userId || `user_${Date.now()}`;
+    const userEmail = valData.email.toLowerCase();
 
-    // 3. Duplicate Prevention Check (At Server Level)
-    const { data: existingTeam } = await adminSupabase
-      .from('teams')
-      .select('id, submission_id, team_name, status')
-      .eq('submitted_by', user.id)
-      .maybeSingle();
+    // 3. Duplicate Prevention Check (1 Account = 1 Submission)
+    const allTeams = await getAllFirestoreTeams();
+    const existingTeam = allTeams.find(
+      (t) => t.submitted_by === userId || t.email.toLowerCase() === userEmail
+    );
 
     if (existingTeam) {
       return NextResponse.json(
@@ -84,89 +82,32 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Validate Form Data with Zod
-    const body = await request.json();
-    const validationResult = registrationSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      const firstError = validationResult.error.errors[0]?.message || 'Invalid form input';
-      return NextResponse.json({ error: firstError, details: validationResult.error.flatten() }, { status: 400 });
-    }
-
-    const valData = validationResult.data;
-
-    // Normalize phone number to +91XXXXXXXXXX
+    // 4. Normalize Phone Number to +91XXXXXXXXXX
     const normalizedPhone = normalizeWhatsAppNumber(valData.whatsappNumber);
 
-    // 5. Ensure Profile row exists for this user
-    await adminSupabase.from('profiles').upsert(
-      {
-        id: user.id,
-        email: user.email,
-        full_name: valData.teamLeaderName,
-        role: 'student',
-      },
-      { onConflict: 'id' }
-    );
+    // 5. Create Team in Cloud Firestore
+    const createdTeam = await createFirestoreTeam({
+      team_name: valData.teamName,
+      team_leader_name: valData.teamLeaderName,
+      whatsapp_number: normalizedPhone,
+      email: valData.email,
+      project_title: valData.projectTitle,
+      theme: valData.theme,
+      problem_description: valData.problemDescription,
+      solution_description: valData.solutionDescription,
+      technologies_used: valData.technologiesUsed,
+      hardware_components: valData.hardwareComponents,
+      expected_outcome: valData.expectedOutcome || null,
+      status: 'submitted',
+      submitted_by: userId,
+      team_members: valData.members.map((m) => ({
+        name: m.name.trim(),
+        year: m.year as CollegeYear,
+        section: m.section as CollegeSection,
+      })),
+    });
 
-    // 6. Generate human-friendly fallback submission ID if DB trigger sequence is bypassed
-    const randomHex = Math.floor(1000 + Math.random() * 9000).toString();
-    const fallbackSubmissionId = `CSEEXPO-2026-${randomHex}`;
-
-    // 7. Insert Team
-    const { data: createdTeam, error: teamInsertError } = await adminSupabase
-      .from('teams')
-      .insert({
-        submission_id: fallbackSubmissionId,
-        team_name: valData.teamName,
-        team_leader_name: valData.teamLeaderName,
-        whatsapp_number: normalizedPhone,
-        email: user.email,
-        project_title: valData.projectTitle,
-        theme: valData.theme,
-        problem_description: valData.problemDescription,
-        solution_description: valData.solutionDescription,
-        technologies_used: valData.technologiesUsed,
-        hardware_components: valData.hardwareComponents,
-        expected_outcome: valData.expectedOutcome || null,
-        status: 'submitted',
-        submitted_by: user.id,
-      })
-      .select()
-      .single();
-
-    if (teamInsertError) {
-      // Check PostgreSQL unique constraint violation (Code 23505)
-      if (teamInsertError.code === '23505') {
-        return NextResponse.json(
-          { error: 'You have already submitted a project using this Gmail account.' },
-          { status: 409 }
-        );
-      }
-      console.error('[Team Insert Error]', teamInsertError);
-      return NextResponse.json(
-        { error: 'Failed to register team. Please check all fields and try again.' },
-        { status: 500 }
-      );
-    }
-
-    // 8. Insert Team Members (2 to 6)
-    const membersToInsert = valData.members.map((m) => ({
-      team_id: createdTeam.id,
-      name: m.name.trim(),
-      year: m.year,
-      section: m.section,
-    }));
-
-    const { error: membersError } = await adminSupabase
-      .from('team_members')
-      .insert(membersToInsert);
-
-    if (membersError) {
-      console.error('[Members Insert Error]', membersError);
-    }
-
-    // 9. Dispatch Meta WhatsApp Cloud API Confirmation
+    // 6. Dispatch Meta WhatsApp Cloud API Confirmation
     let whatsappStatus: 'sent' | 'failed' = 'failed';
     let providerMsgId: string | null = null;
     let whatsappErrorMessage: string | null = null;
@@ -192,8 +133,8 @@ export async function POST(request: Request) {
       whatsappErrorMessage = waEx.message || 'WhatsApp API exception';
     }
 
-    // 10. Audit Log in whatsapp_logs table
-    await adminSupabase.from('whatsapp_logs').insert({
+    // 7. Audit Log in Firestore whatsapp_logs collection
+    await logFirestoreWhatsAppMessage({
       team_id: createdTeam.id,
       phone_number: normalizedPhone,
       message_type: 'submission_confirmation',

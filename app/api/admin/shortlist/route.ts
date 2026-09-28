@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import {
+  getAllFirestoreTeams,
+  updateFirestoreTeam,
+  logFirestoreWhatsAppMessage,
+} from '@/lib/firebase/teams';
 import { verifyAdminSession } from '@/lib/auth/admin-guard';
 import { sendWhatsAppTemplateMessage } from '@/lib/whatsapp/client';
 import {
@@ -22,15 +26,8 @@ export async function POST(request: Request) {
     }
 
     const targetStatus = action === 'reject' ? 'rejected' : 'shortlisted';
-    const adminSupabase = createAdminClient();
-
-    // Fetch the target teams
-    const { data: teams, error: fetchError } = await adminSupabase
-      .from('teams')
-      .select('id, submission_id, team_name, team_leader_name, whatsapp_number, project_title')
-      .in('id', teamIds);
-
-    const teamsToProcess = teams || [];
+    const allTeams = await getAllFirestoreTeams();
+    const teamsToProcess = allTeams.filter((t) => teamIds.includes(t.id));
 
     const results: Array<{
       teamId: string;
@@ -40,11 +37,8 @@ export async function POST(request: Request) {
     }> = [];
 
     for (const team of teamsToProcess) {
-      // 1. Update status in Database
-      await adminSupabase
-        .from('teams')
-        .update({ status: targetStatus, updated_at: new Date().toISOString() })
-        .eq('id', team.id);
+      // 1. Update status in Firestore
+      await updateFirestoreTeam(team.id, { status: targetStatus });
 
       // 2. Prepare & Send WhatsApp Template
       const normalizedPhone = normalizeWhatsAppNumber(team.whatsapp_number);
@@ -76,8 +70,8 @@ export async function POST(request: Request) {
         errorMsg = ex.message;
       }
 
-      // 3. Log to whatsapp_logs
-      await adminSupabase.from('whatsapp_logs').insert({
+      // 3. Log to Firestore whatsapp_logs
+      await logFirestoreWhatsAppMessage({
         team_id: team.id,
         phone_number: normalizedPhone,
         message_type: action === 'reject' ? 'rejected' : 'shortlisted',
@@ -97,7 +91,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       action,
-      updatedCount: teamsToProcess.length || teamIds.length,
+      updatedCount: teamsToProcess.length,
       results,
     });
   } catch (err: any) {
