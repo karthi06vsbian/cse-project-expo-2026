@@ -1,0 +1,102 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: teams
+// Document ID: auto-generated or team ID
+// Fields:
+//   - id: string (required) - unique team identifier
+//   - submission_id: string (required) - format: CSEEXPO-2026-XXXX
+//   - team_name: string (required, 2-100 chars)
+//   - team_leader_name: string (required, 2-100 chars)
+//   - whatsapp_number: string (required, 10-20 chars)
+//   - email: string (required, valid email)
+//   - project_title: string (required, 2-200 chars)
+//   - theme: string (required, 2-50 chars)
+//   - problem_description: string (required, 10-2000 chars)
+//   - solution_description: string (required, 10-2000 chars)
+//   - technologies_used: string (required, 2-500 chars)
+//   - hardware_components: string (required, 2-500 chars)
+//   - expected_outcome: string (required, 2-1000 chars)
+//   - status: string (required, 'submitted' | 'under_review' | 'shortlisted' | 'rejected')
+//   - submitted_by: string (required, matches auth UID)
+//   - submitted_at: string (required, timestamp or ISO string)
+//   - updated_at: string (required, timestamp or ISO string)
+//   - team_members: list of maps (required, size 2-6)
+//
+// Collection: whatsapp_logs
+// Document ID: auto-generated
+// Fields:
+//   - team_id: string (required)
+//   - phone_number: string (required)
+//   - message_type: string (required)
+//   - status: string (required)
+//   - sent_at: string (required)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.submitted_by;
+    }
+
+    function isCreatingOwnDoc() {
+      return isAuthenticated() && request.auth.uid == request.resource.data.submitted_by;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidStatus(status) {
+      return status in ['submitted', 'under_review', 'shortlisted', 'rejected'];
+    }
+
+    function isValidTeam(data) {
+      return data.team_name is string && data.team_name.size() >= 2 && data.team_name.size() <= 100 &&
+             data.team_leader_name is string && data.team_leader_name.size() >= 2 && data.team_leader_name.size() <= 100 &&
+             data.whatsapp_number is string && data.whatsapp_number.size() >= 10 && data.whatsapp_number.size() <= 20 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.project_title is string && data.project_title.size() >= 2 && data.project_title.size() <= 200 &&
+             data.theme is string && data.theme.size() >= 2 && data.theme.size() <= 50 &&
+             data.problem_description is string && data.problem_description.size() >= 10 && data.problem_description.size() <= 2000 &&
+             data.solution_description is string && data.solution_description.size() >= 10 && data.solution_description.size() <= 2000 &&
+             data.technologies_used is string && data.technologies_used.size() >= 2 && data.technologies_used.size() <= 500 &&
+             data.hardware_components is string && data.hardware_components.size() >= 2 && data.hardware_components.size() <= 500 &&
+             data.expected_outcome is string && data.expected_outcome.size() >= 2 && data.expected_outcome.size() <= 1000 &&
+             isValidStatus(data.status) &&
+             data.team_members is list && data.team_members.size() >= 2 && data.team_members.size() <= 6;
+    }
+
+    // Teams collection
+    match /teams/{teamId} {
+      // Allow read if user is the submitter
+      allow read: if isDocOwner();
+      
+      // Allow create if authenticated, creating for self, and payload is valid
+      allow create: if isCreatingOwnDoc() && isValidTeam(request.resource.data) && request.resource.data.status == 'submitted';
+
+      // Updates and deletes are restricted (handled server-side via Firebase Admin)
+      allow update, delete: if false;
+    }
+
+    // WhatsApp logs (internal, only accessible server-side)
+    match /whatsapp_logs/{logId} {
+      allow read, write: if false;
+    }
+
+    // Default deny for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -4,25 +4,45 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { auth, googleProvider } from '@/lib/firebase/client';
-import { signInWithPopup, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  onAuthStateChanged,
+  signOut,
+  User,
+} from 'firebase/auth';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { Cpu, CheckCircle2, AlertCircle, ArrowRight, LogOut } from 'lucide-react';
+import { Cpu, CheckCircle2, AlertCircle, ArrowRight, LogOut, Mail, Lock, User as UserIcon } from 'lucide-react';
 import { Team } from '@/types';
 
 function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  
+  // Email/Password form state
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [nameInput, setNameInput] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
+
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [existingSubmission, setExistingSubmission] = useState<Team | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(true);
+  
   const router = useRouter();
   const searchParams = useSearchParams();
   const authError = searchParams.get('error');
 
   const checkUserSubmission = async (userEmail: string, userId: string) => {
     try {
-      const res = await fetch(`/api/registration?email=${encodeURIComponent(userEmail)}&userId=${encodeURIComponent(userId)}`);
+      const res = await fetch(
+        `/api/registration?email=${encodeURIComponent(userEmail)}&userId=${encodeURIComponent(userId)}`
+      );
       const data = await res.json();
       if (data?.team) {
         setExistingSubmission(data.team);
@@ -50,18 +70,84 @@ function LoginContent() {
     return () => unsubscribe();
   }, []);
 
+  const getFriendlyErrorMessage = (code: string, fallback: string) => {
+    switch (code) {
+      case 'auth/email-already-in-use':
+        return 'An account already exists with this email address. Please sign in instead.';
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      case 'auth/weak-password':
+        return 'Password must be at least 6 characters long.';
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        return 'Invalid email or password. Please verify your credentials.';
+      case 'auth/popup-closed-by-user':
+        return null;
+      default:
+        return fallback;
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+
+    if (!emailInput.trim() || !passwordInput.trim()) {
+      setFormError('Please enter both email and password.');
+      return;
+    }
+
+    if (authMode === 'signup' && passwordInput.length < 6) {
+      setFormError('Password must be at least 6 characters.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (authMode === 'signup') {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          emailInput.trim(),
+          passwordInput
+        );
+        if (nameInput.trim()) {
+          await updateProfile(userCredential.user, {
+            displayName: nameInput.trim(),
+          });
+        }
+        if (userCredential.user.email) {
+          await checkUserSubmission(userCredential.user.email, userCredential.user.uid);
+        }
+      } else {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          emailInput.trim(),
+          passwordInput
+        );
+        if (userCredential.user.email) {
+          await checkUserSubmission(userCredential.user.email, userCredential.user.uid);
+        }
+      }
+    } catch (err: any) {
+      const msg = getFriendlyErrorMessage(err.code, err.message);
+      if (msg) setFormError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGoogleLogin = async () => {
     setIsLoading(true);
+    setFormError(null);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user?.email) {
         await checkUserSubmission(result.user.email, result.user.uid);
       }
     } catch (err: any) {
-      // If popup was closed by user or blocked, provide graceful error
-      if (err.code !== 'auth/popup-closed-by-user') {
-        alert(`Google login error: ${err.message}`);
-      }
+      const msg = getFriendlyErrorMessage(err.code, err.message);
+      if (msg) setFormError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +157,9 @@ function LoginContent() {
     await signOut(auth);
     setCurrentUser(null);
     setExistingSubmission(null);
+    setEmailInput('');
+    setPasswordInput('');
+    setNameInput('');
   };
 
   return (
@@ -79,7 +168,7 @@ function LoginContent() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/15 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-600 shadow-xl shadow-indigo-500/25 mb-4">
             <Cpu className="w-6 h-6 text-white" />
           </div>
@@ -92,29 +181,33 @@ function LoginContent() {
         </div>
 
         {authError && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3">
+          <div className="mb-4 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             <p className="text-xs text-rose-300">
-              Authentication failed. Please try signing in again with your Google account.
+              Authentication failed. Please verify your credentials or try again.
             </p>
           </div>
         )}
 
-        <Card className="border-white/10 bg-slate-900/90 shadow-2xl">
+        <Card className="border-white/10 bg-slate-900/90 shadow-2xl backdrop-blur">
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-xl">
               {existingSubmission
                 ? 'Project Already Registered'
                 : currentUser
                 ? 'Welcome Back'
-                : 'Sign In with Google'}
+                : authMode === 'signin'
+                ? 'Sign In to Your Account'
+                : 'Create Student Account'}
             </CardTitle>
             <CardDescription>
               {existingSubmission
-                ? 'You have already submitted a project with this Gmail account.'
+                ? 'You have already submitted a project with this account.'
                 : currentUser
                 ? `Logged in as ${currentUser.email}`
-                : 'Use your Gmail/Google account to register your team or verify your submission.'}
+                : authMode === 'signin'
+                ? 'Sign in with your Email and Password or Google account'
+                : 'Register with Email & Password to submit your project team'}
             </CardDescription>
           </CardHeader>
 
@@ -153,11 +246,17 @@ function LoginContent() {
                 </div>
 
                 <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
-                  Per expo regulations, each Google account is restricted to one team submission. Your project is recorded and being reviewed by the department.
+                  Per expo regulations, each account is restricted to one team submission. Your project is recorded and being reviewed by the department.
                 </div>
 
                 <div className="pt-2 flex flex-col gap-2">
-                  <Link href={`/success?submission_id=${encodeURIComponent(existingSubmission.submission_id)}&team_name=${encodeURIComponent(existingSubmission.team_name)}&project_title=${encodeURIComponent(existingSubmission.project_title)}&existing=true`}>
+                  <Link
+                    href={`/success?submission_id=${encodeURIComponent(
+                      existingSubmission.submission_id
+                    )}&team_name=${encodeURIComponent(
+                      existingSubmission.team_name
+                    )}&project_title=${encodeURIComponent(existingSubmission.project_title)}&existing=true`}
+                  >
                     <Button className="w-full">
                       View Full Submission Details
                       <ArrowRight className="w-4 h-4 ml-1.5" />
@@ -192,14 +291,129 @@ function LoginContent() {
                 </Button>
               </div>
             ) : (
-              /* Not authenticated */
-              <div className="space-y-4">
+              /* Auth Form (Email/Password + Google) */
+              <div className="space-y-5">
+                {/* Tabs */}
+                <div className="grid grid-cols-2 p-1 bg-slate-950/60 rounded-xl border border-white/5 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthMode('signin');
+                      setFormError(null);
+                    }}
+                    className={`py-2 rounded-lg font-medium transition-all ${
+                      authMode === 'signin'
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthMode('signup');
+                      setFormError(null);
+                    }}
+                    className={`py-2 rounded-lg font-medium transition-all ${
+                      authMode === 'signup'
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Register
+                  </button>
+                </div>
+
+                {formError && (
+                  <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/25 flex items-start gap-2 text-xs text-rose-300">
+                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <span>{formError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleEmailAuth} className="space-y-3.5">
+                  {authMode === 'signup' && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        Full Name / Team Leader Name
+                      </label>
+                      <div className="relative">
+                        <UserIcon className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                        <Input
+                          type="text"
+                          placeholder="e.g. Aarav Sharma"
+                          value={nameInput}
+                          onChange={(e) => setNameInput(e.target.value)}
+                          className="pl-9 bg-slate-950/50 border-white/10"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                      <Input
+                        type="email"
+                        required
+                        placeholder="student@college.edu"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        className="pl-9 bg-slate-950/50 border-white/10"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+                      <Input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={passwordInput}
+                        onChange={(e) => setPasswordInput(e.target.value)}
+                        className="pl-9 bg-slate-950/50 border-white/10"
+                      />
+                    </div>
+                    {authMode === 'signup' && (
+                      <p className="text-[11px] text-slate-500 mt-1">Minimum 6 characters</p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    isLoading={isLoading}
+                    className="w-full h-11 text-sm font-semibold shadow-lg shadow-indigo-600/25"
+                  >
+                    {authMode === 'signin' ? 'Sign In with Email' : 'Create Student Account'}
+                  </Button>
+                </form>
+
+                {/* Divider */}
+                <div className="relative flex items-center justify-center">
+                  <div className="border-t border-white/10 w-full" />
+                  <span className="bg-slate-900 px-3 text-xs uppercase tracking-wider text-slate-500 shrink-0">
+                    Or continue with
+                  </span>
+                  <div className="border-t border-white/10 w-full" />
+                </div>
+
+                {/* Google Sign In */}
                 <Button
+                  type="button"
                   onClick={handleGoogleLogin}
                   isLoading={isLoading}
-                  className="w-full h-12 bg-white hover:bg-slate-100 text-slate-900 border border-slate-200 font-semibold gap-3 shadow-lg"
+                  className="w-full h-11 bg-white hover:bg-slate-100 text-slate-900 border border-slate-200 font-semibold gap-3 shadow-md"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
                       d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"
@@ -217,14 +431,12 @@ function LoginContent() {
                       d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.25 2.64 1.27 6.59l4.01 3.15c.95-2.84 3.6-4.99 6.72-4.99z"
                     />
                   </svg>
-                  Sign in with Google / Gmail
+                  Sign in with Google
                 </Button>
 
-                <div className="text-center pt-2">
-                  <p className="text-xs text-slate-500">
-                    Students must sign in using their official Gmail account. Only 1 project submission is permitted per account.
-                  </p>
-                </div>
+                <p className="text-[11px] text-center text-slate-500">
+                  Each student account is restricted to 1 project submission per college regulations.
+                </p>
               </div>
             )}
           </CardContent>
