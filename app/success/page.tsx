@@ -191,7 +191,20 @@ function SuccessContent() {
 
             {/* Actions */}
             <div className="pt-2 flex flex-col sm:flex-row gap-3">
-              <Link href="/" className="w-full">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(
+                  `✅ CSE Project Expo 2026 Registration Confirmation\nVSB College of Engineering Technical Campus\n\n📌 Submission ID: ${submissionId}\n👥 Team Name: ${teamName}\n💡 Project Title: ${projectTitle}\n⚡ Status: Registered & Under Review\n\nAccess portal: https://cse-project-expo-2026.vercel.app/login`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-1/2"
+              >
+                <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white gap-2 font-semibold shadow-md shadow-emerald-600/25">
+                  <MessageSquare className="w-4 h-4" />
+                  Save / Share to WhatsApp
+                </Button>
+              </a>
+              <Link href="/" className="w-full sm:w-1/2">
                 <Button variant="secondary" className="w-full gap-2">
                   <Home className="w-4 h-4" />
                   Back to Home

@@ -399,15 +399,28 @@ export default function TeamDetailPage() {
                 </div>
                 <div>
                   <span className="text-slate-400 block">Official WhatsApp</span>
-                  <a
-                    href={`https://wa.me/${team.whatsapp_number.replace(/\D/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-mono text-emerald-400 hover:underline flex items-center gap-1.5"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    {team.whatsapp_number}
-                  </a>
+                  <div className="flex flex-col gap-1.5 mt-0.5">
+                    <a
+                      href={`https://wa.me/${team.whatsapp_number.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-mono text-emerald-400 hover:underline flex items-center gap-1.5"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      {team.whatsapp_number}
+                    </a>
+                    <a
+                      href={`https://wa.me/${team.whatsapp_number.replace(/\D/g, '')}?text=${encodeURIComponent(
+                        `Hello ${team.team_leader_name}, this is from CSE Project Expo 2026 at VSB College of Engineering Technical Campus.\n\nRegarding your team "${team.team_name}" and project "${team.project_title}" (ID: ${team.submission_id}):\nYour status is currently [${team.status.toUpperCase()}].`
+                      )}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 border border-emerald-500/30 text-[11px] font-medium transition-colors w-fit"
+                    >
+                      <MessageSquare className="w-3 h-3 text-emerald-400" />
+                      Open WhatsApp Chat
+                    </a>
+                  </div>
                 </div>
                 <div>
                   <span className="text-slate-400 block">Authenticated Gmail</span>
