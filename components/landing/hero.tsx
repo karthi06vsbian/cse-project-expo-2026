@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin, Sparkles, ArrowRight, BookOpen, Cpu } from 'lucide-react';
+import { MapPin, Sparkles, ArrowRight, BookOpen, Cpu, Building2 } from 'lucide-react';
 
 export function Hero() {
   return (
@@ -11,12 +11,12 @@ export function Hero() {
       <div className="absolute top-10 right-10 w-72 h-72 bg-indigo-500/10 blur-[90px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        {/* Department Badge */}
+        {/* Department & College Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-indigo-500/30 text-xs font-semibold text-indigo-300 shadow-inner mb-8 animate-fade-in">
           <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
           <span>Department of Computer Science & Engineering</span>
           <span className="text-slate-600">•</span>
-          <span className="text-slate-400">College of Engineering & Technology</span>
+          <span className="text-slate-400">VSB College of Engineering Technical Campus</span>
         </div>
 
         {/* Headline */}
@@ -55,35 +55,25 @@ export function Hero() {
           </Link>
         </div>
 
-        {/* Key Event Badges Grid */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+        {/* Info Badges Grid (Event dates and deadline removed) */}
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
           <div className="p-4 rounded-xl border border-white/[0.08] bg-slate-900/60 backdrop-blur-md flex items-center gap-3 text-left">
             <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              <Clock className="w-5 h-5" />
+              <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-medium">Registration Deadline</p>
-              <p className="text-sm font-bold text-white">March 31, 2026</p>
+              <p className="text-xs text-slate-400 font-medium">Expo Venue</p>
+              <p className="text-sm font-bold text-white">CSE Department Auditorium</p>
             </div>
           </div>
 
           <div className="p-4 rounded-xl border border-white/[0.08] bg-slate-900/60 backdrop-blur-md flex items-center gap-3 text-left">
             <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Calendar className="w-5 h-5" />
+              <Building2 className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-medium">Project Expo Date</p>
-              <p className="text-sm font-bold text-white">April 15, 2026</p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl border border-white/[0.08] bg-slate-900/60 backdrop-blur-md flex items-center gap-3 text-left">
-            <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 font-medium">Venue</p>
-              <p className="text-sm font-bold text-white">CSE Department Auditorium</p>
+              <p className="text-xs text-slate-400 font-medium">Institution</p>
+              <p className="text-sm font-bold text-white">VSB College of Engineering Technical Campus</p>
             </div>
           </div>
         </div>

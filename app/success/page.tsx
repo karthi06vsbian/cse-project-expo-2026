@@ -185,7 +185,7 @@ function SuccessContent() {
                 What Happens Next?
               </div>
               <p className="text-indigo-300/90 leading-relaxed">
-                The CSE Department Faculty Evaluation Committee is reviewing all submissions. Shortlisted teams will receive direct WhatsApp notification and presentation schedules for the <strong>April 15, 2026</strong> exhibition.
+                The CSE Department Faculty Evaluation Committee is reviewing all submissions. Shortlisted teams will receive direct WhatsApp notification and presentation schedules for the project exhibition.
               </p>
             </div>
 

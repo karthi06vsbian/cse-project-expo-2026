@@ -27,10 +27,10 @@ export function Footer() {
           {/* Department Information */}
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              Department
+              Department & College
             </h4>
             <p className="text-sm text-slate-300 font-medium">Department of Computer Science & Engineering</p>
-            <p className="text-sm text-slate-400">College of Engineering & Technology</p>
+            <p className="text-sm text-slate-400">VSB College of Engineering Technical Campus</p>
             <p className="text-xs text-indigo-400">Academic Year 2025–2026</p>
           </div>
 
@@ -55,9 +55,9 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>© 2026 CSE Project Expo. All rights reserved. Department of Computer Science & Engineering.</p>
+          <p>© 2026 CSE Project Expo. All rights reserved. VSB College of Engineering Technical Campus.</p>
           <div className="flex items-center gap-4">
-            <span>Next.js + Supabase + Meta Cloud API</span>
+            <span>Powered by Next.js & Firebase</span>
           </div>
         </div>
       </div>

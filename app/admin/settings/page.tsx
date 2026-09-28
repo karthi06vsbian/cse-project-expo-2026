@@ -10,7 +10,7 @@ import { EXPO_THEMES, COLLEGE_YEARS, COLLEGE_SECTIONS } from '@/types';
 
 export default function AdminSettingsPage() {
   const [expoName, setExpoName] = useState('CSE Project Expo 2026');
-  const [collegeName, setCollegeName] = useState('College of Engineering & Technology');
+  const [collegeName, setCollegeName] = useState('VSB College of Engineering Technical Campus');
   const [departmentName, setDepartmentName] = useState('Department of Computer Science & Engineering');
   const [deadline, setDeadline] = useState('2026-03-31');
   const [expoDate, setExpoDate] = useState('2026-04-15');

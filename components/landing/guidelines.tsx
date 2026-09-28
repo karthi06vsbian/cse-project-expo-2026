@@ -96,7 +96,7 @@ export function Guidelines() {
               <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-300 leading-relaxed">
-                  Working physical hardware demos must be brought to the CSE Auditorium for live jury review on <strong>April 15, 2026</strong>.
+                  Working physical hardware demos must be brought to the CSE Department Auditorium for live jury evaluation during the expo exhibition.
                 </p>
               </div>
             </div>

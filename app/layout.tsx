@@ -4,16 +4,23 @@ import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
-  title: 'CSE Project Expo 2026 | Build. Innovate. Solve.',
+  title: 'CSE Project Expo 2026 | VSB College of Engineering Technical Campus',
   description:
-    'Annual Project Exhibition by the Department of Computer Science & Engineering. Showcase your Software + Hardware innovation and present your solution to real-world problems.',
+    'Annual Project Exhibition by the Department of Computer Science & Engineering, VSB College of Engineering Technical Campus. Showcase your Software + Hardware innovation and present your solution to real-world problems.',
   keywords: [
     'CSE Project Expo 2026',
+    'VSB College of Engineering Technical Campus',
+    'VSB Engineering College',
     'Computer Science',
     'Hardware Software Projects',
     'Engineering Expo',
     'Student Innovation',
   ],
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
