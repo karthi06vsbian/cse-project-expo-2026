@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { Cpu, CheckCircle2, AlertCircle, ArrowRight, LogOut, ShieldCheck } from 'lucide-react';
+import { Cpu, CheckCircle2, AlertCircle, ArrowRight, LogOut } from 'lucide-react';
 import { Team } from '@/types';
 
 function LoginContent() {
@@ -231,16 +231,6 @@ function LoginContent() {
             )}
           </CardContent>
         </Card>
-
-        <div className="text-center mt-6">
-          <Link
-            href="/admin/login"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-indigo-400 transition-colors"
-          >
-            <ShieldCheck className="w-4 h-4" />
-            Are you a faculty reviewer? Go to Admin Portal
-          </Link>
-        </div>
       </div>
     </div>
   );

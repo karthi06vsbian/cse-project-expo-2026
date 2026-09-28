@@ -1,8 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Sparkles, ArrowRight, ShieldCheck, Cpu } from 'lucide-react';
+import { Calendar, Clock, MapPin, Sparkles, ArrowRight, BookOpen, Cpu } from 'lucide-react';
 
 export function Hero() {
   return (
@@ -48,10 +47,10 @@ export function Hero() {
               <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
-          <Link href="/admin/login" className="w-full sm:w-auto">
+          <Link href="#about" className="w-full sm:w-auto">
             <Button variant="outline" size="lg" className="w-full sm:w-auto text-base gap-2 px-6 py-6 rounded-xl border-slate-700 bg-slate-900/60 hover:bg-slate-800">
-              <ShieldCheck className="w-5 h-5 text-slate-400" />
-              Admin Login
+              <BookOpen className="w-5 h-5 text-slate-400" />
+              View Guidelines
             </Button>
           </Link>
         </div>

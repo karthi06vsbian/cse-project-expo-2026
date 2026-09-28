@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -24,6 +24,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(pathname === '/admin/login');
+
+  useEffect(() => {
+    if (pathname === '/admin/login') {
+      setAuthChecked(true);
+      return;
+    }
+
+    // Verify admin access
+    async function verifyAdmin() {
+      try {
+        const res = await fetch('/api/admin/teams');
+        if (res.status === 401 || res.status === 403) {
+          router.replace('/admin/login');
+        } else {
+          setAuthChecked(true);
+        }
+      } catch (err) {
+        setAuthChecked(true);
+      }
+    }
+    verifyAdmin();
+  }, [pathname, router]);
 
   // Skip sidebar on /admin/login
   if (pathname === '/admin/login') {
@@ -64,6 +87,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     },
     { label: 'Settings', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
   ];
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-[#070b14] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#070b14] flex">

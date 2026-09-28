@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Cpu, ShieldCheck, Sparkles } from 'lucide-react';
+import { Cpu, Sparkles } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -48,12 +48,6 @@ export function Footer() {
               <li>
                 <Link href="/login" className="hover:text-indigo-400 transition-colors">
                   Check Submission Status
-                </Link>
-              </li>
-              <li>
-                <Link href="/admin/login" className="hover:text-indigo-400 transition-colors flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
-                  Department Admin Login
                 </Link>
               </li>
             </ul>

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Cpu, ShieldCheck, UserPlus, Menu, X, ArrowRight } from 'lucide-react';
+import { Cpu, UserPlus, Menu, X, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export function Navbar() {
@@ -77,15 +77,8 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* CTA Buttons */}
+        {/* CTA Button */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/admin/login">
-            <Button variant="ghost" size="sm" className="text-xs text-slate-400 hover:text-white">
-              <ShieldCheck className="w-4 h-4 mr-1 text-slate-400" />
-              Admin
-            </Button>
-          </Link>
-
           <Link href={user ? '/register' : '/login'}>
             <Button size="sm" className="text-xs font-semibold gap-1.5 shadow-indigo-500/25">
               <UserPlus className="w-3.5 h-3.5" />
@@ -148,16 +141,6 @@ export function Navbar() {
               <Button className="w-full justify-center">
                 <UserPlus className="w-4 h-4 mr-2" />
                 {user ? 'Register Project' : 'Register Your Team'}
-              </Button>
-            </Link>
-            <Link
-              href="/admin/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full"
-            >
-              <Button variant="outline" className="w-full justify-center text-slate-300">
-                <ShieldCheck className="w-4 h-4 mr-2" />
-                Admin Portal
               </Button>
             </Link>
           </div>
