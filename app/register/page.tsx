@@ -211,6 +211,12 @@ export default function RegisterPage() {
       errors.members = 'Duplicate member names detected. Each member must have a distinct name.';
     }
 
+    // Check same academic year (inter-year not permitted)
+    const memberYears = Array.from(new Set(members.map((m) => m.year).filter(Boolean)));
+    if (memberYears.length > 1) {
+      errors.members = 'Inter-year collaboration is not permitted. All team members must belong to the same academic year (Inter-section is allowed).';
+    }
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -522,7 +528,7 @@ export default function RegisterPage() {
               <div>
                 <CardTitle>Step 2: Team Members</CardTitle>
                 <CardDescription>
-                  Specify all participating students. Minimum 2 and maximum 6 members (Leader is Member 1).
+                  Specify all participating students. Minimum 2 and maximum 6 members (Leader is Member 1). All members must belong to the same academic year (inter-section allowed, inter-year not allowed).
                 </CardDescription>
               </div>
               <Badge variant="purple" size="sm">

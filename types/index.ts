@@ -49,7 +49,7 @@ export interface WhatsAppLog {
   id: string;
   team_id: string | null;
   phone_number: string;
-  message_type: 'submission_confirmation' | 'shortlisted' | 'rejected';
+  message_type: 'submission_confirmation' | 'shortlisted' | 'rejected' | 'custom_admin_broadcast';
   message_status: 'sent' | 'failed';
   provider_message_id?: string | null;
   error_message?: string | null;

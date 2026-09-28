@@ -94,6 +94,16 @@ export const registrationSchema = z
         message: 'Member names must be distinct. Duplicate names are not allowed.',
       });
     }
+
+    // Ensure all members belong to the same academic year (inter-year not allowed)
+    const years = new Set(data.members.map((m) => m.year));
+    if (years.size > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['members'],
+        message: 'Inter-year collaboration is not permitted. All team members must be from the same academic year.',
+      });
+    }
   });
 
 export type RegistrationSchemaInput = z.infer<typeof registrationSchema>;

@@ -24,6 +24,10 @@ import {
   Phone,
   Calendar,
   AlertTriangle,
+  MessageSquare,
+  Send,
+  Users,
+  CheckSquare,
 } from 'lucide-react';
 import { Team, EXPO_THEMES, COLLEGE_YEARS, COLLEGE_SECTIONS, TeamStatus } from '@/types';
 import { formatDate } from '@/lib/utils';
@@ -50,6 +54,19 @@ function AdminTeamsContent() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isProcessingAction, setIsProcessingAction] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Custom WhatsApp message state
+  const [customMessageModalOpen, setCustomMessageModalOpen] = useState(false);
+  const [customMessageText, setCustomMessageText] = useState(
+    '🎓 *VSB College of Engineering Technical Campus*\n*CSE Project Expo 2026 Announcement*\n\nDear *{name}* ({team}),\n\n[Type your announcement or instructions here]\n\nBest regards,\n*Organizing Committee - CSE Expo 2026*'
+  );
+  const [messageTargetIds, setMessageTargetIds] = useState<string[]>([]);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [messageResult, setMessageResult] = useState<{
+    sent: number;
+    failed: number;
+    details?: string;
+  } | null>(null);
 
   // Load teams from API
   const fetchTeams = async () => {
@@ -244,6 +261,69 @@ function AdminTeamsContent() {
     }
   };
 
+  // Custom WhatsApp Message Handlers
+  const handleOpenCustomMessage = (teamId?: string) => {
+    if (teamId) {
+      setMessageTargetIds([teamId]);
+    } else if (selectedIds.length > 0) {
+      setMessageTargetIds(selectedIds);
+    } else {
+      setMessageTargetIds(filteredTeams.map((t) => t.id));
+    }
+    setMessageResult(null);
+    setCustomMessageModalOpen(true);
+  };
+
+  const handleSendCustomWhatsApp = async () => {
+    if (messageTargetIds.length === 0 || !customMessageText.trim()) return;
+
+    setIsSendingMessage(true);
+    setMessageResult(null);
+
+    const targetTeams = teams.filter((t) => messageTargetIds.includes(t.id));
+    const recipients = targetTeams.map((t) => ({
+      teamId: t.id,
+      name: t.team_leader_name,
+      teamName: t.team_name,
+      phone: t.whatsapp_number,
+      submissionId: t.submission_id,
+      projectTitle: t.project_title,
+    }));
+
+    try {
+      const res = await fetch('/api/admin/whatsapp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipients,
+          message: customMessageText,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessageResult({
+          sent: data.totalSent ?? 0,
+          failed: data.totalFailed ?? 0,
+        });
+      } else {
+        setMessageResult({
+          sent: 0,
+          failed: recipients.length,
+          details: data.error || 'Failed to dispatch messages',
+        });
+      }
+    } catch (err: any) {
+      setMessageResult({
+        sent: 0,
+        failed: recipients.length,
+        details: err?.message || 'Network error',
+      });
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
+
   // Excel Export Handler (Selected, Filtered, or All)
   const handleExportExcel = async (type: 'selected' | 'filtered' | 'all') => {
     setIsExporting(true);
@@ -330,10 +410,31 @@ function AdminTeamsContent() {
                 <FileSpreadsheet className="w-3.5 h-3.5" />
                 Export Selected ({selectedIds.length})
               </Button>
+
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleOpenCustomMessage()}
+                className="text-xs gap-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                WhatsApp Selected ({selectedIds.length})
+              </Button>
             </>
           )}
 
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleOpenCustomMessage()}
+              className="text-xs gap-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+              title="Broadcast custom WhatsApp message to all or selected teams"
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Broadcast WhatsApp
+            </Button>
+
             <Button
               variant="outline"
               size="sm"
@@ -601,6 +702,14 @@ function AdminTeamsContent() {
                           </Link>
 
                           <button
+                            onClick={() => handleOpenCustomMessage(team.id)}
+                            className="p-1.5 rounded hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 transition-colors"
+                            title="Send WhatsApp Message"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
                             onClick={() => handleQuickStatusChange(team.id, 'shortlisted')}
                             className="p-1.5 rounded hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 transition-colors"
                             title="Quick Shortlist"
@@ -734,6 +843,275 @@ function AdminTeamsContent() {
             >
               Delete Team Permanently
             </Button>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Modal: Custom / Random WhatsApp Message Dispatcher */}
+      <Dialog
+        isOpen={customMessageModalOpen}
+        onClose={() => setCustomMessageModalOpen(false)}
+        title="Send Custom WhatsApp Message"
+        description="Broadcast customized announcements directly to participants' registered WhatsApp numbers."
+        maxWidth="2xl"
+      >
+        <div className="space-y-4 pt-2">
+          {/* Target Recipients Selector */}
+          <div className="bg-slate-950/60 p-3.5 rounded-xl border border-white/10 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-indigo-400" />
+                Target Recipients ({messageTargetIds.length} of {teams.length} teams selected)
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMessageTargetIds(teams.map((t) => t.id))}
+                  className="text-[11px] text-indigo-400 hover:text-indigo-300 underline"
+                >
+                  Select All
+                </button>
+                <span className="text-slate-600">•</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMessageTargetIds(
+                      teams.filter((t) => t.status === 'shortlisted').map((t) => t.id)
+                    )
+                  }
+                  className="text-[11px] text-emerald-400 hover:text-emerald-300 underline"
+                >
+                  Only Shortlisted ({teams.filter((t) => t.status === 'shortlisted').length})
+                </button>
+                <span className="text-slate-600">•</span>
+                <button
+                  type="button"
+                  onClick={() => setMessageTargetIds([])}
+                  className="text-[11px] text-slate-400 hover:text-slate-300 underline"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            {/* Recipient Chips */}
+            <div className="max-h-24 overflow-y-auto flex flex-wrap gap-1.5 p-1 bg-slate-900/60 rounded-lg border border-white/5">
+              {teams.map((team) => {
+                const isChecked = messageTargetIds.includes(team.id);
+                return (
+                  <button
+                    key={team.id}
+                    type="button"
+                    onClick={() => {
+                      setMessageTargetIds((prev) =>
+                        isChecked ? prev.filter((id) => id !== team.id) : [...prev, team.id]
+                      );
+                    }}
+                    className={`text-[11px] px-2 py-1 rounded-md transition-all flex items-center gap-1 border ${
+                      isChecked
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-medium'
+                        : 'bg-slate-800/60 text-slate-400 border-white/5 opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <span>{team.team_leader_name}</span>
+                    <span className="text-[10px] text-slate-500">({team.team_name})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Quick Template Presets */}
+          <div className="space-y-1.5">
+            <span className="text-[11px] text-slate-400 font-medium">Quick Template Presets:</span>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() =>
+                  setCustomMessageText(
+                    '🎓 *VSB College of Engineering Technical Campus*\n*CSE Project Expo 2026 Announcement*\n\nDear *{name}* ({team}),\n\nThis is an official announcement regarding your project *{project}* (ID: {submission_id}).\n\n[Type your details here]\n\nBest regards,\n*Department of CSE*'
+                  )
+                }
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/20"
+              >
+                📢 General Announcement
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setCustomMessageText(
+                    '⏰ *VSB CSE Project Expo 2026 - Reporting Notice*\n\nDear *{name}*,\n\nPlease report with your project team *{team}* (ID: {submission_id}) on [Date] at 9:00 AM at the CSE Department Seminar Hall.\n\nBring your working prototype, poster chart, and college ID cards.\n\nBest regards,\n*Organizing Committee*'
+                  )
+                }
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20"
+              >
+                ⏰ Reporting & Venue
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setCustomMessageText(
+                    '📑 *VSB CSE Project Expo 2026 - Document Submission*\n\nDear *{name}*,\n\nReminder: Please submit your final project PPT slides and hardware component documentation for *{team}* (ID: {submission_id}) before 5:00 PM today.\n\nBest regards,\n*Faculty Coordinator*'
+                  )
+                }
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/20"
+              >
+                📑 PPT & Specs Reminder
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setCustomMessageText(
+                    '🎉 *Congratulations {name}!* \n\nYour project *{project}* (Team: *{team}*, ID: {submission_id}) has been *SHORTLISTED* for the final exhibition round of VSB CSE Project Expo 2026!\n\nPlease check your email for the presentation slot and jury schedule.\n\nBest regards,\n*Head of Department - CSE*'
+                  )
+                }
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20"
+              >
+                🎯 Shortlist Congratulations
+              </button>
+            </div>
+          </div>
+
+          {/* Placeholders helper */}
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+            <span>Dynamic tags (click to insert):</span>
+            {['{name}', '{team}', '{submission_id}', '{project}'].map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setCustomMessageText((prev) => prev + ' ' + tag)}
+                className="px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700 font-mono hover:bg-slate-700"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+
+          {/* Message Textarea */}
+          <div className="space-y-1">
+            <textarea
+              value={customMessageText}
+              onChange={(e) => setCustomMessageText(e.target.value)}
+              rows={6}
+              placeholder="Type your message here..."
+              className="w-full rounded-xl bg-slate-950 border border-white/10 p-3.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+            />
+            <div className="flex justify-between text-[11px] text-slate-500">
+              <span>Supports WhatsApp bold (*text*), italic (_text_), and emojis.</span>
+              <span>{customMessageText.length} characters</span>
+            </div>
+          </div>
+
+          {/* WhatsApp Preview Card */}
+          {messageTargetIds.length > 0 && (
+            <div className="bg-[#0b141a] p-3 rounded-xl border border-white/10 space-y-1">
+              <span className="text-[10px] text-slate-400 font-medium">
+                Live WhatsApp Preview (Sample for{' '}
+                {teams.find((t) => t.id === messageTargetIds[0])?.team_leader_name || 'Participant'}
+                ):
+              </span>
+              <div className="bg-[#005c4b] text-white p-3 rounded-xl rounded-tl-none max-w-md text-xs shadow-md space-y-1">
+                <p className="whitespace-pre-wrap leading-relaxed">
+                  {customMessageText
+                    .replace(
+                      /{name}/gi,
+                      teams.find((t) => t.id === messageTargetIds[0])?.team_leader_name || 'Participant'
+                    )
+                    .replace(
+                      /{team}/gi,
+                      teams.find((t) => t.id === messageTargetIds[0])?.team_name || 'Team'
+                    )
+                    .replace(
+                      /{submission_id}/gi,
+                      teams.find((t) => t.id === messageTargetIds[0])?.submission_id || 'CSEEXPO-0001'
+                    )
+                    .replace(
+                      /{project}/gi,
+                      teams.find((t) => t.id === messageTargetIds[0])?.project_title || 'Project Title'
+                    )}
+                </p>
+                <div className="text-[9px] text-emerald-200/60 text-right">Just now ✓✓</div>
+              </div>
+            </div>
+          )}
+
+          {/* Feedback / Result Banner */}
+          {messageResult && (
+            <div
+              className={`p-3 rounded-xl border text-xs ${
+                messageResult.failed === 0
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                  : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+              }`}
+            >
+              <div className="font-semibold">
+                {messageResult.failed === 0 ? '✓ Broadcast Successful' : 'Broadcast Finished'}
+              </div>
+              <p className="text-[11px] mt-0.5">
+                Sent: {messageResult.sent} | Failed: {messageResult.failed}
+                {messageResult.details && ` (${messageResult.details})`}
+              </p>
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCustomMessageModalOpen(false)}
+              disabled={isSendingMessage}
+            >
+              Close
+            </Button>
+
+            <div className="flex items-center gap-2">
+              {messageTargetIds.length === 1 && (
+                <a
+                  href={`https://wa.me/${(
+                    teams.find((t) => t.id === messageTargetIds[0])?.whatsapp_number || ''
+                  ).replace(/\D/g, '')}?text=${encodeURIComponent(
+                    customMessageText
+                      .replace(
+                        /{name}/gi,
+                        teams.find((t) => t.id === messageTargetIds[0])?.team_leader_name || 'Participant'
+                      )
+                      .replace(
+                        /{team}/gi,
+                        teams.find((t) => t.id === messageTargetIds[0])?.team_name || 'Team'
+                      )
+                      .replace(
+                        /{submission_id}/gi,
+                        teams.find((t) => t.id === messageTargetIds[0])?.submission_id || ''
+                      )
+                      .replace(
+                        /{project}/gi,
+                        teams.find((t) => t.id === messageTargetIds[0])?.project_title || ''
+                      )
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600/30 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  Open in WhatsApp Web
+                </a>
+              )}
+
+              <Button
+                variant="success"
+                size="sm"
+                onClick={handleSendCustomWhatsApp}
+                isLoading={isSendingMessage}
+                disabled={messageTargetIds.length === 0 || !customMessageText.trim()}
+                className="gap-1.5 shadow-emerald-500/25"
+              >
+                <Send className="w-3.5 h-3.5" />
+                {isSendingMessage
+                  ? `Sending (${messageTargetIds.length})...`
+                  : `Send via Cloud API (${messageTargetIds.length})`}
+              </Button>
+            </div>
           </div>
         </div>
       </Dialog>

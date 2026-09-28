@@ -31,7 +31,7 @@ export function Guidelines() {
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="text-sm text-slate-200">
-                  <strong className="text-white">Team Composition:</strong> Minimum of <strong>2</strong> and maximum of <strong>6</strong> students per team. Inter-year and inter-section collaboration is permitted.
+                  <strong className="text-white">Team Composition:</strong> Minimum of <strong>2</strong> and maximum of <strong>6</strong> students per team. Inter-section collaboration is permitted, but inter-year collaboration is not allowed (all team members must be from the same academic year).
                 </span>
               </li>
               <li className="flex items-start gap-3">
