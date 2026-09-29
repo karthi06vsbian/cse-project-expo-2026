@@ -25,7 +25,7 @@ export const memberSchema = z.object({
     errorMap: () => ({ message: 'Please select a valid year (1st, 2nd, 3rd, or 4th Year)' }),
   }),
   section: z.enum(COLLEGE_SECTIONS as unknown as [string, ...string[]], {
-    errorMap: () => ({ message: 'Please select a valid section (A, B, C, D, E, or F)' }),
+    errorMap: () => ({ message: 'Please select a valid section (A, B, C, D, E, F, or G)' }),
   }),
 });
 
@@ -105,13 +105,13 @@ export const registrationSchema = z
       });
     }
 
-    // Ensure sections E and F are only used for 1st Year
+    // Ensure sections E, F, and G are only used for 1st Year
     data.members.forEach((m, idx) => {
-      if (m.year !== '1st Year' && (m.section === 'E' || m.section === 'F')) {
+      if (m.year !== '1st Year' && (m.section === 'E' || m.section === 'F' || m.section === 'G')) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['members'],
-          message: `Sections E and F are only available for 1st Year. Member ${m.name || idx + 1} (${m.year}) must be in Section A, B, C, or D.`,
+          message: `Sections E, F, and G are only available for 1st Year. Member ${m.name || idx + 1} (${m.year}) must be in Section A, B, C, or D.`,
         });
       }
     });

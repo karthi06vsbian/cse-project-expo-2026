@@ -151,8 +151,8 @@ export default function RegisterPage() {
     setMembers((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
-      // If switching year away from 1st Year and section was E or F, reset to Section A
-      if (field === 'year' && value !== '1st Year' && (copy[index].section === 'E' || copy[index].section === 'F')) {
+      // If switching year away from 1st Year and section was E, F, or G, reset to Section A
+      if (field === 'year' && value !== '1st Year' && (copy[index].section === 'E' || copy[index].section === 'F' || copy[index].section === 'G')) {
         copy[index].section = 'A';
       }
       return copy;
@@ -222,10 +222,10 @@ export default function RegisterPage() {
       errors.members = 'Inter-year collaboration is not permitted. All team members must belong to the same academic year (Inter-section is allowed).';
     }
 
-    // Check valid section per year (E and F only for 1st Year)
+    // Check valid section per year (E, F, and G only for 1st Year)
     members.forEach((m, idx) => {
-      if (m.year !== '1st Year' && (m.section === 'E' || m.section === 'F')) {
-        errors[`member_${idx}`] = `Sections E and F are only available for 1st Year. Please select Section A, B, C, or D for ${m.year}.`;
+      if (m.year !== '1st Year' && (m.section === 'E' || m.section === 'F' || m.section === 'G')) {
+        errors[`member_${idx}`] = `Sections E, F, and G are only available for 1st Year. Please select Section A, B, C, or D for ${m.year}.`;
       }
     });
 

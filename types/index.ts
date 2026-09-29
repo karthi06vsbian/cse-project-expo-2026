@@ -4,7 +4,7 @@ export type TeamStatus = 'submitted' | 'under_review' | 'shortlisted' | 'rejecte
 
 export type CollegeYear = '1st Year' | '2nd Year' | '3rd Year' | '4th Year';
 
-export type CollegeSection = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+export type CollegeSection = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
 
 export interface Profile {
   id: string;
@@ -116,8 +116,8 @@ export const COLLEGE_YEARS: CollegeYear[] = [
   '4th Year',
 ];
 
-export const COLLEGE_SECTIONS: CollegeSection[] = ['A', 'B', 'C', 'D', 'E', 'F'];
-export const FIRST_YEAR_SECTIONS: CollegeSection[] = ['A', 'B', 'C', 'D', 'E', 'F'];
+export const COLLEGE_SECTIONS: CollegeSection[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+export const FIRST_YEAR_SECTIONS: CollegeSection[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 export const UPPER_YEAR_SECTIONS: CollegeSection[] = ['A', 'B', 'C', 'D'];
 
 export function getSectionsForYear(year?: CollegeYear): CollegeSection[] {
