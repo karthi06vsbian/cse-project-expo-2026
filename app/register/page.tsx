@@ -17,6 +17,7 @@ import {
   COLLEGE_SECTIONS,
   CollegeYear,
   CollegeSection,
+  getSectionsForYear,
 } from '@/types';
 import {
   Users,
@@ -150,6 +151,10 @@ export default function RegisterPage() {
     setMembers((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
+      // If switching year away from 1st Year and section was E or F, reset to Section A
+      if (field === 'year' && value !== '1st Year' && (copy[index].section === 'E' || copy[index].section === 'F')) {
+        copy[index].section = 'A';
+      }
       return copy;
     });
   };
@@ -216,6 +221,13 @@ export default function RegisterPage() {
     if (memberYears.length > 1) {
       errors.members = 'Inter-year collaboration is not permitted. All team members must belong to the same academic year (Inter-section is allowed).';
     }
+
+    // Check valid section per year (E and F only for 1st Year)
+    members.forEach((m, idx) => {
+      if (m.year !== '1st Year' && (m.section === 'E' || m.section === 'F')) {
+        errors[`member_${idx}`] = `Sections E and F are only available for 1st Year. Please select Section A, B, C, or D for ${m.year}.`;
+      }
+    });
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -596,7 +608,10 @@ export default function RegisterPage() {
                         onChange={(e) =>
                           handleMemberChange(index, 'section', e.target.value as CollegeSection)
                         }
-                        options={COLLEGE_SECTIONS.map((s) => ({ value: s, label: `Section ${s}` }))}
+                        options={getSectionsForYear(member.year).map((s) => ({
+                          value: s,
+                          label: `Section ${s}`,
+                        }))}
                       />
                     </div>
                   </div>

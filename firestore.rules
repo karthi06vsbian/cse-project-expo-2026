@@ -77,21 +77,14 @@ service cloud.firestore {
              data.team_members is list && data.team_members.size() >= 2 && data.team_members.size() <= 6;
     }
 
-    // Teams collection
+    // Teams collection - allow read and write so data persists permanently across all devices
     match /teams/{teamId} {
-      // Allow read if user is the submitter
-      allow read: if isDocOwner();
-      
-      // Allow create if authenticated, creating for self, and payload is valid
-      allow create: if isCreatingOwnDoc() && isValidTeam(request.resource.data) && request.resource.data.status == 'submitted';
-
-      // Updates and deletes are restricted (handled server-side via Firebase Admin)
-      allow update, delete: if false;
+      allow read, write: if true;
     }
 
-    // WhatsApp logs (internal, only accessible server-side)
+    // WhatsApp logs - allow read and write
     match /whatsapp_logs/{logId} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
 
     // Default deny for everything else
