@@ -1,185 +1,108 @@
 {
   "teams": [
     {
-      "id": "sXYFZ40fEuC97jWoERfd",
-      "team_members": [
-        {
-          "name": "Ananya Reddy",
-          "section": "A",
-          "year": "4th Year"
-        },
-        {
-          "section": "A",
-          "year": "4th Year",
-          "name": "Ishaan Pillai"
-        }
-      ],
-      "team_leader_name": "Ananya Reddy",
-      "whatsapp_number": "+919876543213",
-      "project_title": "Autonomous Campus Renewable Microgrid Load Balancer",
-      "hardware_components": "Arduino Mega 2560, ACS712 Current Sensors, ZMPT101B Voltage Sensors, Solid State Relays (40A)",
-      "submission_id": "CSEEXPO-2026-0004",
-      "submitted_at": "2026-09-27T23:59:34.774Z",
-      "problem_description": "Campuses experience erratic power distribution and waste diesel generator fuel during peak hours.",
-      "status": "submitted",
-      "theme": "Smart Campus",
-      "solution_description": "An intelligent power controller utilizing deep Q-learning to dynamically shift heavy HVAC loads to solar battery banks.",
-      "email": "ananya.reddy@gmail.com",
-      "expected_outcome": "18% reduction in grid electricity consumption.",
-      "updated_at": "2026-09-28T23:59:34.774Z",
-      "team_name": "GreenGrid Micro",
-      "technologies_used": "Next.js, PyTorch, Node-RED, Modbus TCP, TimescaleDB",
-      "submitted_by": "user-4"
-    },
-    {
-      "id": "GPJoySz3ADv7clRyTNn4",
-      "email": "rohan.verma@gmail.com",
-      "project_title": "Dynamic Refreshable Braille Slate with Voice OCR",
-      "theme": "Education",
-      "team_members": [
-        {
-          "section": "C",
-          "year": "2nd Year",
-          "name": "Rohan Verma"
-        },
-        {
-          "name": "Gaurav Mehta",
-          "section": "C",
-          "year": "2nd Year"
-        },
-        {
-          "year": "2nd Year",
-          "section": "D",
-          "name": "Harini Swaminathan"
-        }
-      ],
-      "expected_outcome": "Affordable dynamic Braille reading device manufactured under INR 4,500.",
-      "submitted_at": "2026-09-26T23:59:34.774Z",
-      "submission_id": "CSEEXPO-2026-0003",
-      "status": "under_review",
-      "whatsapp_number": "+919876543212",
-      "hardware_components": "STM32 Nucleo Board, 192 Micro-solenoid Actuators, OV5640 Camera Module, Bone-conduction Audio Transducer",
-      "submitted_by": "user-3",
-      "problem_description": "Commercial refreshable Braille displays cost upwards of $2,000, rendering them inaccessible to 95% of visually impaired students.",
-      "team_leader_name": "Rohan Verma",
-      "updated_at": "2026-09-28T23:59:34.774Z",
-      "team_name": "NeuroBraille",
-      "solution_description": "A low-cost 32-cell electromagnetic Braille display combined with an overhead camera that performs optical character recognition.",
-      "technologies_used": "Python OpenCV, Tesseract OCR, PyTorch, Node.js API"
-    },
-    {
-      "id": "NKkxuA1FwlNv81nMFB0l",
-      "hardware_components": "ESP32 DevKit, Capacitive Soil Moisture Sensors, NPK Soil Sensor, 12V Solenoid Valves, LoRa Ra-02 Module",
-      "updated_at": "2026-09-28T23:59:34.774Z",
-      "project_title": "Precision Soil Health & Automated Irrigation System",
-      "technologies_used": "Next.js, Python, Flask, TensorFlow Lite, MQTT, InfluxDB",
-      "submission_id": "CSEEXPO-2026-0001",
-      "submitted_by": "user-1",
-      "team_leader_name": "Aarav Sharma",
-      "problem_description": "Traditional farming leads to 40% water wastage and excessive chemical fertilizer usage due to lack of real-time soil nutrient and moisture data.",
-      "theme": "Agriculture",
+      "id": "CAZKIms3HiwYWVI70HuS",
+      "solution_description": "Using Sensors like temperature,voltage we can find the status of Lt line",
+      "problem_description": "Gridguard Ai in Lt line and automatic emergency shutdown",
+      "technologies_used": "Python Flask",
+      "updated_at": "2026-09-29T00:23:54.151Z",
+      "whatsapp_number": "+919025896972",
+      "email": "madhusreemanokaran@gmail.com",
+      "theme": "Artificial Intelligence",
+      "submitted_by": "bVfhFnDBj3e41NdGajmsYPQcZVg2",
+      "team_leader_name": "Madhu Sree",
+      "hardware_components": "Lora Module",
+      "project_title": "Gridguard Ai",
       "team_members": [
         {
           "year": "3rd Year",
-          "section": "A",
-          "name": "Aarav Sharma"
-        },
-        {
-          "year": "3rd Year",
-          "section": "A",
-          "name": "Bhavya Gupta"
+          "section": "B",
+          "name": "Madhu Sree"
         },
         {
           "year": "3rd Year",
           "section": "B",
-          "name": "Chirag Singhal"
-        },
-        {
-          "year": "3rd Year",
-          "section": "A",
-          "name": "Deepak Joshi"
+          "name": "Gracy"
         }
       ],
-      "email": "aarav.sharma@gmail.com",
-      "status": "shortlisted",
-      "team_name": "AgriSense IoT",
-      "solution_description": "An edge-AI enabled smart telemetry system with multi-depth soil probes, automated solenoid irrigation valves, and a React Native dashboard.",
-      "whatsapp_number": "+919876543210",
-      "submitted_at": "2026-09-25T23:59:34.774Z",
-      "expected_outcome": "35% water savings and early detection of nutrient deficiencies."
+      "expected_outcome": null,
+      "submitted_at": "2026-09-29T00:23:54.151Z",
+      "status": "submitted",
+      "submission_id": "CSEEXPO-2026-0003",
+      "team_name": "Techora"
     },
     {
-      "id": "RHTcSDfzUz0AW6gy0y0R",
-      "email": "diya.patel@gmail.com",
-      "theme": "Healthcare",
-      "project_title": "Non-Invasive Wearable Cardiac & Hypoxia Alert Band",
-      "technologies_used": "React, FastAPI, Scikit-learn, WebSockets, Supabase",
-      "submitted_at": "2026-09-24T23:59:34.774Z",
-      "submission_id": "CSEEXPO-2026-0002",
-      "expected_outcome": "Continuous 24-hr vitals monitoring with sub-3 second emergency trigger.",
-      "team_name": "PulseGuard",
-      "status": "shortlisted",
+      "id": "GPJoySz3ADv7clRyTNn4",
+      "status": "rejected",
+      "technologies_used": "Python OpenCV, Tesseract OCR, PyTorch, Node.js API",
+      "submission_id": "CSEEXPO-2026-0003",
+      "theme": "Education",
+      "hardware_components": "STM32 Nucleo Board, 192 Micro-solenoid Actuators, OV5640 Camera Module, Bone-conduction Audio Transducer",
+      "solution_description": "A low-cost 32-cell electromagnetic Braille display combined with an overhead camera that performs optical character recognition.",
+      "whatsapp_number": "+919876543212",
+      "project_title": "Dynamic Refreshable Braille Slate with Voice OCR",
       "team_members": [
         {
-          "year": "4th Year",
-          "name": "Diya Patel",
-          "section": "B"
-        },
-        {
-          "year": "4th Year",
-          "name": "Eshwar Rao",
-          "section": "B"
-        },
-        {
-          "name": "Farhan Khan",
+          "year": "2nd Year",
           "section": "C",
-          "year": "4th Year"
+          "name": "Rohan Verma"
+        },
+        {
+          "year": "2nd Year",
+          "section": "C",
+          "name": "Gaurav Mehta"
+        },
+        {
+          "section": "D",
+          "year": "2nd Year",
+          "name": "Harini Swaminathan"
         }
       ],
-      "solution_description": "A wristband running lightweight tinyML for anomaly classification in PPG waveform with GSM-assisted SOS beaconing.",
-      "problem_description": "Rural patients experiencing arrhythmia and nocturnal hypoxia often face delayed emergency response due to absence of affordable continuous telemetry.",
-      "submitted_by": "user-2",
-      "updated_at": "2026-09-28T23:59:34.774Z",
-      "whatsapp_number": "+919876543211",
-      "team_leader_name": "Diya Patel",
-      "hardware_components": "Raspberry Pi Pico W, MAX30102 PPG Sensor, AD8232 ECG Sensor, SIM800L GSM Module, 0.96 OLED Display"
+      "email": "rohan.verma@gmail.com",
+      "team_leader_name": "Rohan Verma",
+      "submitted_by": "user-3",
+      "expected_outcome": "Affordable dynamic Braille reading device manufactured under INR 4,500.",
+      "submitted_at": "2026-09-26T23:59:34.774Z",
+      "updated_at": "2026-09-29T00:05:30.362Z",
+      "team_name": "NeuroBraille",
+      "problem_description": "Commercial refreshable Braille displays cost upwards of $2,000, rendering them inaccessible to 95% of visually impaired students."
     },
     {
       "id": "OTQmu1DcO7F8Q8jUNvp2",
-      "expected_outcome": "Zero false negatives in safety hazard classification.",
-      "submitted_by": "user-5",
-      "email": "vikram.singh@gmail.com",
-      "status": "shortlisted",
-      "theme": "Artificial Intelligence",
-      "team_name": "SafeStream AI",
-      "technologies_used": "C++, OpenCV, CUDA, TensorRT, Electron Dashboard",
-      "whatsapp_number": "+919876543214",
       "team_leader_name": "Vikram Singh",
       "updated_at": "2026-09-28T23:59:34.774Z",
-      "project_title": "Vision-Based Industrial Machine Safety Interlock",
+      "theme": "Artificial Intelligence",
+      "expected_outcome": "Zero false negatives in safety hazard classification.",
       "hardware_components": "NVIDIA Jetson Orin Nano, Dual Global Shutter CSI Cameras, Optocoupler Relay Isolation Board",
+      "team_name": "SafeStream AI",
       "submitted_at": "2026-09-23T23:59:34.774Z",
+      "status": "shortlisted",
+      "email": "vikram.singh@gmail.com",
+      "whatsapp_number": "+919876543214",
+      "project_title": "Vision-Based Industrial Machine Safety Interlock",
+      "problem_description": "Accidents at mechanical presses occur when operators bypass safety light curtains during shifts.",
+      "technologies_used": "C++, OpenCV, CUDA, TensorRT, Electron Dashboard",
+      "submission_id": "CSEEXPO-2026-0005",
+      "submitted_by": "user-5",
       "solution_description": "Stereo-vision edge module tracking operator hands, predicting trajectory, and triggering electronic emergency brakes in 40ms.",
       "team_members": [
         {
           "name": "Vikram Singh",
-          "section": "B",
-          "year": "3rd Year"
+          "year": "3rd Year",
+          "section": "B"
         },
         {
+          "name": "Jaya Prakash",
           "year": "3rd Year",
-          "section": "B",
-          "name": "Jaya Prakash"
+          "section": "B"
         },
         {
-          "year": "3rd Year",
+          "name": "Karan Malhotra",
           "section": "C",
-          "name": "Karan Malhotra"
+          "year": "3rd Year"
         }
-      ],
-      "problem_description": "Accidents at mechanical presses occur when operators bypass safety light curtains during shifts.",
-      "submission_id": "CSEEXPO-2026-0005"
+      ]
     }
   ],
-  "total": 5
+  "exported_at": "2026-09-29T00:49:24.976Z"
 }

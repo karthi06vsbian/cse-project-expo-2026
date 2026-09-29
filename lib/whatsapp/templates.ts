@@ -72,3 +72,23 @@ export function buildNotShortlistedTemplate(
     ],
   };
 }
+
+export function buildCustomAnnouncementTemplate(
+  leaderName: string,
+  messageContent: string
+): WhatsAppTemplatePayload {
+  return {
+    name: 'expo_custom_announcement',
+    language: { code: 'en_US' },
+    components: [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: leaderName || 'Participant' },
+          { type: 'text', text: messageContent },
+        ],
+      },
+    ],
+  };
+}
+
