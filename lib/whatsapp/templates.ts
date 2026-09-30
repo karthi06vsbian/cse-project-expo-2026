@@ -92,3 +92,25 @@ export function buildCustomAnnouncementTemplate(
   };
 }
 
+export function buildTeamUpdateTemplate(
+  leaderName: string,
+  submissionId: string,
+  messageContent: string
+): WhatsAppTemplatePayload {
+  return {
+    name: 'expo_team_update',
+    language: { code: 'en_US' },
+    components: [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: leaderName || 'Participant' },
+          { type: 'text', text: submissionId || 'CSEEXPO-2026' },
+          { type: 'text', text: messageContent },
+        ],
+      },
+    ],
+  };
+}
+
+

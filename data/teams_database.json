@@ -1,108 +1,303 @@
 {
   "teams": [
     {
-      "id": "CAZKIms3HiwYWVI70HuS",
-      "solution_description": "Using Sensors like temperature,voltage we can find the status of Lt line",
-      "problem_description": "Gridguard Ai in Lt line and automatic emergency shutdown",
-      "technologies_used": "Python Flask",
-      "updated_at": "2026-09-29T00:23:54.151Z",
-      "whatsapp_number": "+919025896972",
-      "email": "madhusreemanokaran@gmail.com",
-      "theme": "Artificial Intelligence",
-      "submitted_by": "bVfhFnDBj3e41NdGajmsYPQcZVg2",
-      "team_leader_name": "Madhu Sree",
-      "hardware_components": "Lora Module",
-      "project_title": "Gridguard Ai",
-      "team_members": [
-        {
-          "year": "3rd Year",
-          "section": "B",
-          "name": "Madhu Sree"
-        },
-        {
-          "year": "3rd Year",
-          "section": "B",
-          "name": "Gracy"
-        }
-      ],
+      "id": "0f7TYgBaymNptOfk9Ujz",
       "expected_outcome": null,
-      "submitted_at": "2026-09-29T00:23:54.151Z",
+      "problem_description": "Step 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*",
+      "technologies_used": "Step 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*\nStep 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*\nStep 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*",
+      "project_title": "test11111",
+      "submitted_at": "2026-09-29T06:33:07.847Z",
+      "solution_description": "Step 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*\nStep 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*",
       "status": "submitted",
-      "submission_id": "CSEEXPO-2026-0003",
-      "team_name": "Techora"
-    },
-    {
-      "id": "GPJoySz3ADv7clRyTNn4",
-      "status": "rejected",
-      "technologies_used": "Python OpenCV, Tesseract OCR, PyTorch, Node.js API",
-      "submission_id": "CSEEXPO-2026-0003",
-      "theme": "Education",
-      "hardware_components": "STM32 Nucleo Board, 192 Micro-solenoid Actuators, OV5640 Camera Module, Bone-conduction Audio Transducer",
-      "solution_description": "A low-cost 32-cell electromagnetic Braille display combined with an overhead camera that performs optical character recognition.",
-      "whatsapp_number": "+919876543212",
-      "project_title": "Dynamic Refreshable Braille Slate with Voice OCR",
+      "email": "karnexhaoffc@gmail.com",
+      "submitted_by": "CI51eaXQAZX6hmWTjpugIZ1wkbx1",
+      "team_name": "karthi",
+      "updated_at": "2026-09-29T06:33:07.847Z",
+      "theme": "Agriculture",
+      "submission_id": "CSEEXPO-2026-0001",
+      "team_leader_name": "Karnexha Offc",
       "team_members": [
         {
-          "year": "2nd Year",
-          "section": "C",
-          "name": "Rohan Verma"
+          "section": "G",
+          "name": "Karnexha Offc",
+          "year": "1st Year"
         },
         {
-          "year": "2nd Year",
-          "section": "C",
-          "name": "Gaurav Mehta"
-        },
-        {
-          "section": "D",
-          "year": "2nd Year",
-          "name": "Harini Swaminathan"
+          "name": "karthi",
+          "year": "1st Year",
+          "section": "A"
         }
       ],
-      "email": "rohan.verma@gmail.com",
-      "team_leader_name": "Rohan Verma",
-      "submitted_by": "user-3",
-      "expected_outcome": "Affordable dynamic Braille reading device manufactured under INR 4,500.",
-      "submitted_at": "2026-09-26T23:59:34.774Z",
-      "updated_at": "2026-09-29T00:05:30.362Z",
-      "team_name": "NeuroBraille",
-      "problem_description": "Commercial refreshable Braille displays cost upwards of $2,000, rendering them inaccessible to 95% of visually impaired students."
+      "hardware_components": "Step 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*\nStep 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*\nStep 1: Team & Project Specifications\nEnter your team identity, problem theme, and hardware/software technical architecture.\n\nSoftware + Hardware\nTeam Name*\ne.g. AgriSense IoT\nTeam Leader Full Name*",
+      "whatsapp_number": "+918778606059"
     },
     {
-      "id": "OTQmu1DcO7F8Q8jUNvp2",
-      "team_leader_name": "Vikram Singh",
-      "updated_at": "2026-09-28T23:59:34.774Z",
-      "theme": "Artificial Intelligence",
-      "expected_outcome": "Zero false negatives in safety hazard classification.",
-      "hardware_components": "NVIDIA Jetson Orin Nano, Dual Global Shutter CSI Cameras, Optocoupler Relay Isolation Board",
-      "team_name": "SafeStream AI",
-      "submitted_at": "2026-09-23T23:59:34.774Z",
-      "status": "shortlisted",
-      "email": "vikram.singh@gmail.com",
-      "whatsapp_number": "+919876543214",
-      "project_title": "Vision-Based Industrial Machine Safety Interlock",
-      "problem_description": "Accidents at mechanical presses occur when operators bypass safety light curtains during shifts.",
-      "technologies_used": "C++, OpenCV, CUDA, TensorRT, Electron Dashboard",
-      "submission_id": "CSEEXPO-2026-0005",
-      "submitted_by": "user-5",
-      "solution_description": "Stereo-vision edge module tracking operator hands, predicting trajectory, and triggering electronic emergency brakes in 40ms.",
+      "id": "9RdtmbU05aH9dvtZ4O0F",
+      "problem_description": "Plants need regular watering for healthy growth, but people may forget to water them due to busy schedules or being away from home. Manual watering can also result in overwatering or underwatering. This may affect the health and growth of plants and waste water. Therefore, an automatic system is needed to monitor soil moisture and provide the required amount of water whenever the soil becomes dry.",
+      "submitted_by": "zTVmUwoz7LeuNYKADTBL67fa2F22",
+      "project_title": "Automatic plant watering system",
+      "updated_at": "2026-09-30T12:34:49.807Z",
+      "team_name": "SS tech",
+      "solution_description": "The proposed system is an automatic plant watering system using an Arduino and a soil moisture sensor. The sensor continuously monitors the moisture level of the soil. When the soil becomes too dry, the Arduino automatically activates a water pump to supply water to the plant. Once the soil reaches the required moisture level, the pump is turned off automatically. This reduces the need for manual watering and helps prevent water wastage.",
+      "email": "sadhasivam17092008@gmail.com",
       "team_members": [
         {
-          "name": "Vikram Singh",
-          "year": "3rd Year",
-          "section": "B"
+          "year": "1st Year",
+          "section": "F",
+          "name": "Sadha Sivam"
         },
         {
-          "name": "Jaya Prakash",
-          "year": "3rd Year",
-          "section": "B"
+          "section": "F",
+          "year": "1st Year",
+          "name": "Sree Hari"
         },
         {
-          "name": "Karan Malhotra",
-          "section": "C",
+          "year": "1st Year",
+          "name": "Sibidharan",
+          "section": "F"
+        },
+        {
+          "year": "1st Year",
+          "section": "F",
+          "name": "Sri Sanjai Raghav"
+        },
+        {
+          "name": "Salman Faris",
+          "year": "1st Year",
+          "section": "F"
+        }
+      ],
+      "team_leader_name": "Sadha Sivam",
+      "technologies_used": "Arduino IDE(Integrated Development Environment)",
+      "submitted_at": "2026-09-30T12:34:49.807Z",
+      "theme": "Agriculture",
+      "status": "submitted",
+      "expected_outcome": null,
+      "submission_id": "CSEEXPO-2026-0005",
+      "hardware_components": "Adriuno nano,Soil moisture sensor module,0.96 inch display,water pump.",
+      "whatsapp_number": "+916379261134"
+    },
+    {
+      "id": "Kr67tAeSGnH8ylrJtrYP",
+      "whatsapp_number": "+919025896972",
+      "expected_outcome": null,
+      "project_title": "Mednova",
+      "updated_at": "2026-09-30T14:39:24.447Z",
+      "hardware_components": "LoraModule",
+      "theme": "Healthcare",
+      "submitted_at": "2026-09-30T14:39:24.447Z",
+      "technologies_used": "Next.js",
+      "team_members": [
+        {
+          "name": "Madhu Sree",
+          "section": "B",
+          "year": "3rd Year"
+        },
+        {
+          "name": "Gracy",
+          "section": "B",
+          "year": "3rd Year"
+        },
+        {
+          "name": "Maragatham",
+          "section": "B",
           "year": "3rd Year"
         }
-      ]
+      ],
+      "team_name": "Mednova",
+      "team_leader_name": "Madhu Sree",
+      "problem_description": "Mannual medical submission reports",
+      "email": "madhusreemanokaran@gmail.com",
+      "submission_id": "CSEEXPO-2026-0007",
+      "solution_description": "Using Ai for medical reports which is useful for patients",
+      "submitted_by": "bVfhFnDBj3e41NdGajmsYPQcZVg2",
+      "status": "submitted"
+    },
+    {
+      "id": "OH3VV7j8HFx8rFYaQ9YL",
+      "whatsapp_number": "+919443588231",
+      "expected_outcome": null,
+      "project_title": "Smart Farm Guard: Ultrasonic-Based Stray Animal Intrusion Detection and Alert System",
+      "updated_at": "2026-09-30T13:51:16.672Z",
+      "hardware_components": "ESP32 DevKit (microcontroller with Wi-Fi), HC-SR04 Ultrasonic Sensor, Active Buzzer, LED with 220Ω resistor, 1kΩ and 2kΩ resistors (voltage divider for the Echo pin), Breadboard, Jumper Wires, USB Cable / 5V Power Bank",
+      "theme": "Agriculture",
+      "submitted_at": "2026-09-30T13:51:16.672Z",
+      "technologies_used": "Arduino IDE, Embedded C/C++, ESP32 Arduino Core, WebServer library (ESP32 as a Wi-Fi web server), HTML/CSS for the dashboard page",
+      "team_members": [
+        {
+          "name": "Rishid S",
+          "section": "E",
+          "year": "1st Year"
+        },
+        {
+          "name": "Ritesh",
+          "year": "1st Year",
+          "section": "E"
+        },
+        {
+          "name": "Pranesh T",
+          "section": "E",
+          "year": "1st Year"
+        },
+        {
+          "year": "1st Year",
+          "section": "E",
+          "name": "Pranesh P"
+        },
+        {
+          "name": "Praveen M",
+          "section": "E",
+          "year": "1st Year"
+        },
+        {
+          "name": "Rishindhar",
+          "year": "1st Year",
+          "section": "E"
+        }
+      ],
+      "team_name": "Cipher",
+      "team_leader_name": "Rishid S",
+      "problem_description": "Farmers living near forest edges and rural areas lose a significant part of their crops to stray animals such as wild boars, cattle and elephants entering fields, mostly at night. Guarding the fields manually is tiring, unsafe and not affordable for small farmers, and solutions like electric fencing are expensive and can be dangerous to both animals and people. There is a need for a low-cost system that can detect an intrusion at a field entry point and alert the farmer immediately, so that action can be taken before the crop is damaged.",
+      "email": "rishids123@gmail.com",
+      "submission_id": "CSEEXPO-2026-0006",
+      "solution_description": "The system is built around an ESP32 microcontroller connected to an HC-SR04 ultrasonic sensor placed at a field entry point such as a gate or a gap in the fence. The sensor continuously measures the distance of objects in front of it. When an object comes closer than a preset threshold for several consecutive readings, the ESP32 treats it as an intrusion and immediately activates a buzzer and a flashing LED to scare the animal away. Each event is logged with a timestamp, and the farmer can view live distance readings and the intrusion log on a web dashboard hosted by the ESP32 over Wi-Fi.",
+      "submitted_by": "devM9EKmwIZMXUUgmgzkFG1jyUi2",
+      "status": "submitted"
+    },
+    {
+      "id": "OfRlZG9QvFcq8x4sq0U4",
+      "solution_description": "LifeCraft AI is a web-based game that gives students different real-life situations. Students make decisions and see the results of their choices. The game has different levels, challenges, and stories. Their skills such as problem-solving, decision-making, creativity, teamwork, and financial skills increase as they complete the levels. An AI assistant called LUMA gives hints and guidance during the game. After completing all levels, students can unlock their certificate.",
+      "project_title": "Life raft AI",
+      "submitted_by": "LM73VzCnXHRNRQnCqL63i9jIapm2",
+      "status": "under_review",
+      "team_members": [
+        {
+          "year": "2nd Year",
+          "section": "A",
+          "name": "Bhuvana A"
+        },
+        {
+          "section": "A",
+          "year": "2nd Year",
+          "name": "Anitha C"
+        },
+        {
+          "year": "2nd Year",
+          "name": "Dharshini B",
+          "section": "A"
+        }
+      ],
+      "email": "bhuvibhuvana1106@gmail.com",
+      "hardware_components": "No hardware or sensors is required",
+      "whatsapp_number": "+919750551880",
+      "expected_outcome": null,
+      "updated_at": "2026-09-29T16:19:35.260Z",
+      "problem_description": "After completing 12th grade, many students feel confused about choosing the right course, career, or future path. They may not know their strengths, interests, or the skills needed for different careers. At the same time, students get fewer opportunities to practice real-life skills like decision-making, problem-solving, teamwork, and financial management. LifeCraft AI helps solve this problem through an interactive game where students explore different situations, make decisions, understand the results, and discover their skills and interests in an engaging way",
+      "submitted_at": "2026-09-29T15:56:38.045Z",
+      "theme": "Education",
+      "submission_id": "CSEEXPO-2026-0003",
+      "team_leader_name": "Bhuvana A",
+      "team_name": "NextGenz",
+      "technologies_used": "React.js, TypeScript, HTML, CSS, Node.js, AI/LLM API, Database, REST API"
+    },
+    {
+      "id": "PVQLFtTD3vhNdtdI4B1l",
+      "solution_description": "This project aims to build a low-cost GPS-based device that warns fishermen with a buzzer and lights as they near the boundary and sends their live location to family and authorities.",
+      "project_title": "Fishermen border alert",
+      "submitted_by": "mplMVv7JRVeOkuEufIfPHtoGSKY2",
+      "status": "submitted",
+      "team_members": [
+        {
+          "name": "Yazhini Athishkumar",
+          "section": "G",
+          "year": "1st Year"
+        },
+        {
+          "section": "G",
+          "year": "1st Year",
+          "name": "Trinitta Rani.A"
+        },
+        {
+          "name": "Vijaya Dharshini.N",
+          "section": "G",
+          "year": "1st Year"
+        },
+        {
+          "year": "1st Year",
+          "section": "G",
+          "name": "Thanisha Poornima .S"
+        },
+        {
+          "year": "1st Year",
+          "section": "G",
+          "name": "Thabiksha.V"
+        },
+        {
+          "year": "1st Year",
+          "section": "G",
+          "name": "Vaishnavi Devi.S"
+        }
+      ],
+      "hardware_components": "ESP32,\nGPS module (NEO-6M),\nGSM module (SIM800L),\nBuzzer + LEDs etc",
+      "email": "yazhiniathish@gmail.com",
+      "whatsapp_number": "+919342356256",
+      "expected_outcome": "A low-cost device that gives fishermen early border warnings and lets families track them, reducing accidental arrests, protecting livelihoods, and improving safety at sea.",
+      "updated_at": "2026-09-30T14:39:06.288Z",
+      "submitted_at": "2026-09-30T14:39:06.288Z",
+      "problem_description": "Small-scale fishermen often cross invisible international maritime boundaries by accident because their boats lack an affordable way to track their position, leading to arrests, seized boats, and lost livelihoods.",
+      "theme": "Social Impact",
+      "submission_id": "CSEEXPO-2026-0006",
+      "team_leader_name": "Yazhini Athishkumar",
+      "technologies_used": "Arduino IDE (C/C++),\nTinyGPS++,\nGeofencing logic (Haversine formula),\nFirebase etc",
+      "team_name": "Titanic six"
+    },
+    {
+      "id": "gT1O4belBTmqaPEK8jt3",
+      "submitted_at": "2026-09-30T05:20:45.888Z",
+      "theme": "Social Impact",
+      "whatsapp_number": "+919488779796",
+      "hardware_components": "📍 GPS Sensor – Tourist location track panna\n📐 6-Axis IMU / Accelerometer (MPU6050) – Slip, fall, sudden movement detect panna\n🌡️ Barometric Pressure Sensor (BMP390) – Altitude & sudden pressure changes detect panna\n❤️ Heart Rate Sensor (MAX30102) – Heart-rate changes monitor panna\n💧 Temperature & Humidity Sensor (SHT30) – Weather/environment condition monitor panna\n🌊 Water Detection Sensor – Water/flash-flood exposure detect panna\n\n soil sensors --  this only not insert in the bracelet",
+      "project_title": "GEOSHIELD -- TOURIST SAFETY SYSTEM",
+      "status": "submitted",
+      "expected_outcome": "Improves tourist safety and confidence through real-time monitoring, alerts, and rapid emergency response. Supports authorities with accurate location tracking and faster rescue coordination during emergencies. Promotes tourism growth while enabling safe and sustainable management of environmentally sensitive areas.",
+      "solution_description": "GEOSHIELD is an AI-powered Tourist Safety Application designed to provide proactive protection and rapid emergency response for travelers. The system combines real-time GPS tracking, wearable IoT devices, predictive risk analysis, geofencing technology, and instant SOS communication to continuously monitor tourist safety. By detecting potential threats, sending early warnings, and automatically coordinating with emergency services, GEOSHIELD helps ensure safer travel experiences while reducing response times during critical situations.",
+      "submitted_by": "tfvHqAjjHuQDuaBYsBTJkLEjjl63",
+      "submission_id": "CSEEXPO-2026-0004",
+      "team_leader_name": "JAIKAILAS GK",
+      "technologies_used": "Front-End & Mobile Development\nReact.js – User interface development\nTypeScript – Type-safe application development\nVite – Fast build and development environment\nTailwind CSS – Responsive and modern UI design\nBack-End & Cloud Services\nFastAPI (Python) – High-performance REST API development\nNode.js – Real-time backend services and integrations\nRender Cloud Platform – Application deployment and hosting\nArtificial Intelligence & Machine Learning\nGroq API (Llama 3.3) – Threat analysis, emergency message processing, and decision support\nYOLOv8 – Safety object detection and environmental hazard identification\nPredictive Analytics Models – Risk prediction and tourist safety assessment\nBlockchain & IoT\nHyperledger Fabric – Secure and tamper-proof incident logging\nLoRaWAN – Long-range emergency communication\nGSM/GPS Modules – Real-time location tracking and SOS transmission\nWearable IoT Devices – Panic button and tourist monitoring\nDatabase\nMySQL 8.0 – Storage of user, location, incident, alert, and prediction data",
+      "team_members": [
+        {
+          "section": "B",
+          "year": "2nd Year",
+          "name": "JAIKAILAS GK"
+        },
+        {
+          "name": "JOTHI DHARSHAN K",
+          "section": "B",
+          "year": "2nd Year"
+        },
+        {
+          "year": "2nd Year",
+          "name": "KINGSTON DANIEL S",
+          "section": "B"
+        },
+        {
+          "section": "B",
+          "year": "2nd Year",
+          "name": "LOKENETHREN P"
+        },
+        {
+          "name": "KRITHIK B",
+          "section": "B",
+          "year": "2nd Year"
+        }
+      ],
+      "updated_at": "2026-09-30T05:20:45.888Z",
+      "problem_description": "Tourists traveling in unfamiliar locations often face safety challenges such as entering unsafe zones, getting lost, language barriers, delayed emergency assistance, and lack of real-time information about potential threats. Existing safety solutions primarily react after an incident occurs rather than preventing risks beforehand. This can lead to increased response times and reduced traveler confidence, especially in remote or crowded tourist destinations.",
+      "email": "gkkailas10@gmail.com",
+      "team_name": "INVICTUS"
     }
   ],
-  "exported_at": "2026-09-29T00:49:24.976Z"
+  "total": 7,
+  "exported_at": "2026-09-30T14:45:32.308Z"
 }

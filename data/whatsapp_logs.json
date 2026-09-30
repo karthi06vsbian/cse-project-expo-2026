@@ -1,35 +1,166 @@
 {
   "logs": [
     {
-      "id": "8CSged7p08lWe4XnC5UU",
-      "message_type": "custom_admin_broadcast",
-      "team_id": "CAZKIms3HiwYWVI70HuS",
-      "phone_number": "+919025896972",
+      "id": "1S8QswhQ4KqouSajB8uK",
+      "sent_at": "2026-09-30T14:39:08.998Z",
+      "message_type": "submission_confirmation",
+      "phone_number": "+919342356256",
+      "team_id": "PVQLFtTD3vhNdtdI4B1l",
+      "provider_message_id": "wamid.HBgMOTE5MzQyMzU2MjU2FQIAERgSNUJFMEI1MTFBM0NEOURENUM1AA==",
       "message_status": "sent",
-      "provider_message_id": "wamid.HBgMOTE5MDI1ODk2OTcyFQIAERgSRDg1MDJCOThCODFCRTVDNjM4AA==",
-      "sent_at": "2026-09-29T00:25:22.728Z",
       "error_message": null
     },
     {
+      "id": "7SS4DfjpfY5Te1IoE1Aq",
+      "message_status": "sent",
+      "sent_at": "2026-09-30T14:29:33.216Z",
+      "message_type": "custom_admin_broadcast",
+      "error_message": null,
+      "provider_message_id": "wamid.HBgMOTE5MDI1ODk2OTcyFQIAERgSREQ4OTM0REUwOTdGRjVEMUQ2AA==",
+      "phone_number": "+919025896972",
+      "team_id": "r1wupU9f1pGwkDA4l6cQ"
+    },
+    {
+      "id": "8CSged7p08lWe4XnC5UU",
+      "message_status": "sent",
+      "sent_at": "2026-09-29T00:25:22.728Z",
+      "phone_number": "+919025896972",
+      "message_type": "custom_admin_broadcast",
+      "team_id": "CAZKIms3HiwYWVI70HuS",
+      "provider_message_id": "wamid.HBgMOTE5MDI1ODk2OTcyFQIAERgSRDg1MDJCOThCODFCRTVDNjM4AA==",
+      "error_message": null
+    },
+    {
+      "id": "AsoFE0mMpIUKfEST50ZM",
+      "phone_number": "+918610852612",
+      "sent_at": "2026-09-30T04:19:14.554Z",
+      "message_status": "sent",
+      "error_message": null,
+      "message_type": "custom_admin_broadcast",
+      "team_id": "2d4sKoKfO3eT2SDsdJVQ",
+      "provider_message_id": "wamid.HBgMOTE4NjEwODUyNjEyFQIAERgSRjlENjdGMERDMDBBOUZGNzBGAA=="
+    },
+    {
+      "id": "E2HUMlTqA0eAhgyf8Hmn",
+      "sent_at": "2026-09-30T12:34:52.550Z",
+      "provider_message_id": "wamid.HBgMOTE2Mzc5MjYxMTM0FQIAERgSMTM5RTI5NjQ2RkRCMkNENDhGAA==",
+      "message_type": "submission_confirmation",
+      "error_message": null,
+      "message_status": "sent",
+      "team_id": "9RdtmbU05aH9dvtZ4O0F",
+      "phone_number": "+916379261134"
+    },
+    {
+      "id": "FlWar1piPZabHZy9PR8m",
+      "provider_message_id": "wamid.HBgMOTE5NzUwNTUxODgwFQIAERgSMkJENDJFMjgwQzA5NTJGN0Q5AA==",
+      "error_message": null,
+      "phone_number": "+919750551880",
+      "sent_at": "2026-09-29T15:56:42.162Z",
+      "message_status": "sent",
+      "message_type": "submission_confirmation",
+      "team_id": "OfRlZG9QvFcq8x4sq0U4"
+    },
+    {
+      "id": "NFDRSC7GLIQApqEikPqu",
+      "message_type": "submission_confirmation",
+      "error_message": null,
+      "sent_at": "2026-09-29T06:33:11.349Z",
+      "message_status": "sent",
+      "provider_message_id": "wamid.HBgMOTE4Nzc4NjA2MDU5FQIAERgSMjhDMTMwREY1QUM1MTIyRDM3AA==",
+      "team_id": "0f7TYgBaymNptOfk9Ujz",
+      "phone_number": "+918778606059"
+    },
+    {
+      "id": "UXJKAbUmC1Kr3clT83wS",
+      "error_message": null,
+      "phone_number": "+918668171203",
+      "sent_at": "2026-09-29T03:38:02.506Z",
+      "provider_message_id": "wamid.HBgMOTE4NjY4MTcxMjAzFQIAERgSMjAxMkFGN0UyMzJEQTZBQTUzAA==",
+      "message_status": "sent",
+      "message_type": "submission_confirmation",
+      "team_id": "pWctMF8QagUIhTbpwt8Z"
+    },
+    {
+      "id": "VOpepDadbCjeAQxV1Zhk",
+      "message_type": "submission_confirmation",
+      "provider_message_id": "wamid.HBgMOTE5MDI1ODk2OTcyFQIAERgSQjQ5RjZGMkUzMkYxMjY3MzhBAA==",
+      "sent_at": "2026-09-30T14:39:25.258Z",
+      "error_message": null,
+      "team_id": "Kr67tAeSGnH8ylrJtrYP",
+      "message_status": "sent",
+      "phone_number": "+919025896972"
+    },
+    {
+      "id": "bQqH14qqC3CZDNhK2bvj",
+      "message_type": "submission_confirmation",
+      "message_status": "sent",
+      "provider_message_id": "wamid.HBgMOTE5NDQzNTg4MjMxFQIAERgSNjZCQkY1RjE1QkU3Q0MzRTQ1AA==",
+      "sent_at": "2026-09-30T13:51:20.563Z",
+      "phone_number": "+919443588231",
+      "error_message": null,
+      "team_id": "OH3VV7j8HFx8rFYaQ9YL"
+    },
+    {
+      "id": "crjehzvhr2pI7q5Gydoo",
+      "phone_number": "+918610852612",
+      "sent_at": "2026-09-30T04:17:45.560Z",
+      "error_message": null,
+      "message_type": "submission_confirmation",
+      "team_id": "2d4sKoKfO3eT2SDsdJVQ",
+      "message_status": "sent",
+      "provider_message_id": "wamid.HBgMOTE4NjEwODUyNjEyFQIAERgSRTMxMjg4Mjk3MEFGRENDMDdGAA=="
+    },
+    {
       "id": "e4BqtbfsONt3ogVCHKWV",
+      "message_status": "sent",
       "sent_at": "2026-09-29T00:23:57.153Z",
       "message_type": "submission_confirmation",
       "error_message": null,
-      "phone_number": "+919025896972",
       "provider_message_id": "wamid.HBgMOTE5MDI1ODk2OTcyFQIAERgSODUxREU0RkNCMkUyQkQ0QjkwAA==",
+      "team_id": "CAZKIms3HiwYWVI70HuS",
+      "phone_number": "+919025896972"
+    },
+    {
+      "id": "mySxOhHUcBh40vyQt1Dx",
       "message_status": "sent",
-      "team_id": "CAZKIms3HiwYWVI70HuS"
+      "team_id": "gT1O4belBTmqaPEK8jt3",
+      "message_type": "submission_confirmation",
+      "error_message": null,
+      "sent_at": "2026-09-30T05:20:47.605Z",
+      "phone_number": "+919488779796",
+      "provider_message_id": "wamid.HBgMOTE5NDg4Nzc5Nzk2FQIAERgSQTlENTVGNDg4MDMzMTE2QjU0AA=="
+    },
+    {
+      "id": "tM5za25fMGHJDWwEpTKq",
+      "error_message": null,
+      "phone_number": "+919025896972",
+      "sent_at": "2026-09-29T15:45:37.505Z",
+      "message_type": "submission_confirmation",
+      "message_status": "sent",
+      "provider_message_id": "wamid.HBgMOTE5MDI1ODk2OTcyFQIAERgSOUVDMkQxMjM0M0JGRjBERkNEAA==",
+      "team_id": "r1wupU9f1pGwkDA4l6cQ"
+    },
+    {
+      "id": "xkgBaQlLm0fpkubVfQ5D",
+      "team_id": "2d4sKoKfO3eT2SDsdJVQ",
+      "message_type": "custom_admin_broadcast",
+      "provider_message_id": "wamid.HBgMOTE4NjEwODUyNjEyFQIAERgSMUVEODUwREVDQUM3Q0YyOTE2AA==",
+      "sent_at": "2026-09-30T04:20:04.149Z",
+      "message_status": "sent",
+      "phone_number": "+918610852612",
+      "error_message": null
     },
     {
       "id": "zW23hDwG0JbtbbnHlnxN",
-      "error_message": null,
-      "message_status": "sent",
-      "team_id": "ket9PXGr1QO42BREigqM",
+      "sent_at": "2026-09-29T00:16:39.661Z",
+      "phone_number": "+919876543219",
       "provider_message_id": "wamid.HBgMOTE5ODc2NTQzMjE5FQIAERgSNUVENkM3NjVEM0JFOTExNEVFAA==",
       "message_type": "submission_confirmation",
-      "sent_at": "2026-09-29T00:16:39.661Z",
-      "phone_number": "+919876543219"
+      "error_message": null,
+      "team_id": "ket9PXGr1QO42BREigqM",
+      "message_status": "sent"
     }
   ],
-  "exported_at": "2026-09-29T00:49:25.098Z"
+  "total": 16,
+  "exported_at": "2026-09-30T14:45:32.309Z"
 }

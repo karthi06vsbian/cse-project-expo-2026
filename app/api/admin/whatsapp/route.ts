@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAllFirestoreWhatsAppLogs, logFirestoreWhatsAppMessage } from '@/lib/firebase/teams';
 import { verifyAdminSession } from '@/lib/auth/admin-guard';
 import { sendWhatsAppTemplateMessage, sendWhatsAppTextMessage } from '@/lib/whatsapp/client';
-import { buildCustomAnnouncementTemplate } from '@/lib/whatsapp/templates';
+import { buildTeamUpdateTemplate, buildCustomAnnouncementTemplate } from '@/lib/whatsapp/templates';
 import { normalizeWhatsAppNumber } from '@/lib/validation/schemas';
 
 export async function GET() {
@@ -45,7 +45,8 @@ export async function POST(req: Request) {
 
       const phone = normalizeWhatsAppNumber(r.phone || r.whatsappNumber || r.whatsapp_number);
       const recipientName = r.leaderName || r.name || 'Participant';
-      const templatePayload = buildCustomAnnouncementTemplate(recipientName, personalizedMsg);
+      const submissionId = r.submissionId || r.submission_id || 'CSEEXPO-2026';
+      const templatePayload = buildTeamUpdateTemplate(recipientName, submissionId, personalizedMsg);
       const res = await sendWhatsAppTemplateMessage(phone, templatePayload, personalizedMsg);
 
       await logFirestoreWhatsAppMessage({
